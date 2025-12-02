@@ -84,20 +84,19 @@ function renderTaskRow(task, state) {
     }
   });
 
-  const text = el("div", "task-text");
-  text.textContent = task.text;
-  if (state.completed) text.classList.add("completed");
+const text = el("div", "task-text");
+text.textContent = task.text;
+if (state.completed) text.classList.add("completed");
 
-  row.appendChild(checkbox);
-  row.appendChild(text);
+// Master note (template) goes *inside* the text block, beneath the main line
+if (task.note) {
+  const masterNote = el("div", "task-note");
+  masterNote.textContent = "Guide: " + task.note;
+  text.appendChild(masterNote);
+}
 
-  // Master note (template)
-  if (task.note) {
-    const masterNote = el("div", "task-note");
-    masterNote.style.color = "#6b7280";
-    masterNote.textContent = "Guide: " + task.note;
-    row.appendChild(masterNote);
-  }
+row.appendChild(checkbox);
+row.appendChild(text);
 
   return row;
 }
@@ -116,4 +115,5 @@ function saveCurrentInstance() {
     console.warn("Failed to save demo instance", e);
   }
 }
+
 
