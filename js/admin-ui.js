@@ -162,7 +162,9 @@ function renderAdminSection(section, sectionIndex) {
   const titleWrap = el("div", "admin-section-title-wrap");
   titleWrap.appendChild(titleInput);
 
-  // Right: ▲ / ▼ arrows
+  // Right: actions (▲ / ▼ + delete)
+  const actions = el("div", "admin-header-actions");
+
   const arrowGroup = el("div", "admin-arrow-group");
   const upBtn = el("button", "btn-arrow", "▲");
   const downBtn = el("button", "btn-arrow", "▼");
@@ -183,8 +185,17 @@ function renderAdminSection(section, sectionIndex) {
   arrowGroup.appendChild(upBtn);
   arrowGroup.appendChild(downBtn);
 
+  const deleteBtn = el("button", "btn-delete", "✕");
+  deleteBtn.title = "Delete section";
+  deleteBtn.addEventListener("click", () => {
+    deleteSection(sectionIndex);
+  });
+
+  actions.appendChild(arrowGroup);
+  actions.appendChild(deleteBtn);
+
   header.appendChild(titleWrap);
-  header.appendChild(arrowGroup);
+  header.appendChild(actions);
 
   card.appendChild(header);
 
@@ -408,5 +419,6 @@ function showExportModal() {
 
   document.body.appendChild(overlay);
 }
+
 
 
