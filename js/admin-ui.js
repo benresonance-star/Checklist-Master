@@ -525,4 +525,3 @@ function showExportModal() {
   overlay.appendChild(modal);
   document.body.appendChild(overlay);
 }
-
