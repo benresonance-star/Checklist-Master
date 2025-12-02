@@ -1,48 +1,28 @@
 /* ============================================================
-   CHECKLIST APP – GLOBAL STYLE (v2)
-   Compact Google-like UI, grey–blue palette
+   GLOBAL
    ============================================================ */
 
-/* ---------- Color + radius tokens ---------- */
-
 :root {
-  /* Surfaces */
-  --surface: #ffffff;
-  --surface-variant: #f3f4f6;
-  --app-bg: #f5f5f7;
-
-  /* Text */
-  --text-main: #1f2933;
-  --text-subtle: #6b7280;
-  --text-muted: #9ca3af;
-
-  /* Accent / state */
-  --accent: #1a73e8;
-  --accent-soft: #e3f2fd;
-  --accent-strong: #1667cc;
+  --bg-main: #f3f4f6;
+  --bg-card: #ffffff;
+  --bg-soft: #eef2ff;
+  --bg-subsection: #f3f4f9;
   --border-subtle: #e5e7eb;
-  --border-soft: #dde1e7;
-  --danger: #d93025;
+  --border-strong: #d1d5db;
+  --text-main: #111827;
+  --text-muted: #6b7280;
+  --accent-blue: #2563eb;
+  --accent-blue-soft: #e0ebff;
+  --danger: #e11d48;
   --danger-soft: #fee2e2;
 
-  /* Structural */
-  --section-header-bg: #eef3ff;
-  --section-header-border: #d7e1ff;
-
-  /* Radii */
-  --radius-lg: 18px;
+  --radius-lg: 16px;
   --radius-md: 12px;
-  --radius-sm: 10px;
-  --radius-xs: 7px;
+  --radius-sm: 8px;
 
-  /* Shadows */
-  --shadow-card: 0 2px 6px rgba(15, 23, 42, 0.06);
-  --shadow-hover: 0 3px 10px rgba(15, 23, 42, 0.12);
-
-  --transition-fast: 0.18s ease;
+  --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.12);
+  --shadow-subtle: 0 4px 12px rgba(15, 23, 42, 0.08);
 }
-
-/* ---------- Base ---------- */
 
 *,
 *::before,
@@ -52,57 +32,44 @@
 
 html,
 body {
-  margin: 0;
-  padding: 0;
+  height: 100%;
 }
 
 body {
+  margin: 0;
+  padding: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
     "Segoe UI", sans-serif;
-  background: var(--app-bg);
+  background: radial-gradient(circle at top, #e0f2ff 0, #f3f4f6 50%);
   color: var(--text-main);
 }
 
-/* Wrapper that JS mounts into */
-
+/* Shell for both runner & admin */
 #app {
   max-width: 960px;
   margin: 0 auto;
   padding: 16px 12px 32px;
 }
 
-/* ---------- Generic cards ---------- */
+/* ============================================================
+   GENERIC CARDS & TYPOGRAPHY
+   ============================================================ */
 
 .card {
-  background: var(--surface);
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--border-soft);
-  box-shadow: var(--shadow-card);
-  padding: 14px 16px;
-  margin: 12px 0;
+  box-shadow: var(--shadow-subtle);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  padding: 16px 18px;
+  margin-bottom: 14px;
 }
-
-/* ---------- Headings & text ---------- */
 
 h1,
 h2,
 h3,
 h4 {
   margin: 0;
-  font-weight: 700;
   letter-spacing: -0.02em;
-}
-
-h1 {
-  font-size: 1.9rem;
-}
-
-h2 {
-  font-size: 1.35rem;
-}
-
-h3 {
-  font-size: 1.05rem;
 }
 
 p {
@@ -110,300 +77,132 @@ p {
 }
 
 /* ============================================================
-   BUTTONS
-   Shared between runner + admin
+   GENERIC BUTTONS
    ============================================================ */
 
 button {
   font-family: inherit;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  background: transparent;
-  -webkit-tap-highlight-color: transparent;
 }
 
-/* Primary action (Export JSON, etc.) */
-
 .btn-primary {
-  background: var(--accent);
+  border-radius: 999px;
+  border: 1px solid var(--accent-blue);
+  background: var(--accent-blue);
   color: #ffffff;
-  padding: 9px 16px;
-  border-radius: var(--radius-sm);
-  font-size: 0.9rem;
+  font-size: 0.94rem;
+  padding: 9px 18px;
   font-weight: 500;
-  box-shadow: var(--shadow-card);
-  transition: background var(--transition-fast), box-shadow var(--transition-fast),
-    transform var(--transition-fast);
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35);
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
 .btn-primary:hover {
-  background: var(--accent-strong);
-  box-shadow: var(--shadow-hover);
-  transform: translateY(-1px);
+  background: #1d4ed8;
 }
-
-/* Subtle button */
-
-.btn-secondary {
-  background: var(--surface-variant);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-subtle);
-  padding: 9px 16px;
-  font-size: 0.9rem;
-  color: var(--text-main);
-}
-
-/* Outline variants */
 
 .btn-primary-outline {
-  background: transparent;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--accent);
-  padding: 8px 14px;
-  font-size: 0.88rem;
-  color: var(--accent);
+  border-radius: 999px;
+  border: 1px solid var(--accent-blue);
+  background: #ffffff;
+  color: var(--accent-blue);
+  font-size: 0.9rem;
+  padding: 7px 14px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(37, 99, 235, 0.18);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
 .btn-small-outline {
-  background: transparent;
-  border-radius: var(--radius-xs);
-  border: 1px solid var(--accent);
-  padding: 5px 10px;
-  font-size: 0.84rem;
-  color: var(--accent);
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  background: #f9fafb;
+  color: var(--text-main);
+  font-size: 0.82rem;
+  padding: 6px 12px;
+  cursor: pointer;
 }
 
 .full-width {
   width: 100%;
 }
 
-/* Icon buttons: arrows, duplicate, delete (small and quiet) */
-
-.btn-arrow,
-.btn-delete {
-  width: 24px;
-  height: 24px;
-  border-radius: var(--radius-xs);
-  border: 1px solid var(--border-subtle);
-  background: var(--surface);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  cursor: pointer;
-  transition: background var(--transition-fast), transform var(--transition-fast);
-  box-shadow: none;
-}
-
-.btn-arrow:hover,
-.btn-delete:hover {
-  background: #eef0f3;
-  transform: translateY(-1px);
-}
-
-.btn-delete {
-  color: var(--danger);
-  border-color: #f3b5b5;
-}
-
-/* Chevron toggle – ghost-style so it reads as a handle, not an action */
-
-.btn-toggle {
-  width: 22px;
-  height: 22px;
-  border-radius: 999px;
-  border: none;
-  background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.8rem;
-  color: var(--text-subtle);
-}
-
-.btn-toggle:hover {
-  background: rgba(15, 23, 42, 0.04);
-  transform: none;
-}
-
-/* Right-side control strip */
-
-.admin-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-right: 2px;
-}
-
-.admin-arrow-group {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
 /* ============================================================
-   RUNNER MODE (project checklist instances)
+   ADMIN HEADER
    ============================================================ */
-
-/* Top card */
-
-.runner-header {
-  margin-bottom: 8px;
-}
-
-.runner-header-title {
-  font-size: 1.6rem;
-  font-weight: 700;
-  margin-bottom: 6px;
-}
-
-.runner-header-subtitle {
-  font-size: 0.9rem;
-  color: var(--text-subtle);
-}
-
-/* Section cards */
-
-.runner-section-card {
-  padding: 12px 14px 10px;
-}
-
-.runner-section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.runner-section-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-
-/* Subsections */
-
-.runner-subsection {
-  background: var(--surface-variant);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-soft);
-  padding: 8px 10px 10px;
-  margin-top: 6px;
-}
-
-.runner-subsection-title {
-  font-size: 0.98rem;
-  font-weight: 500;
-  margin-bottom: 4px;
-}
-
-/* Tasks */
-
-.runner-task-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  padding: 6px 4px;
-}
-
-.runner-task-checkbox {
-  margin-top: 2px;
-}
-
-.runner-task-main {
-  flex: 1;
-  min-width: 0;
-}
-
-.runner-task-text {
-  font-size: 0.9rem;
-}
-
-.runner-task-text.completed {
-  text-decoration: line-through;
-  color: var(--text-muted);
-}
-
-/* Optional guidance/note */
-
-.runner-task-note {
-  font-size: 0.78rem;
-  color: var(--text-subtle);
-  margin-top: 2px;
-}
-
-/* Status pill */
-
-.pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: rgba(15, 23, 42, 0.04);
-  font-size: 0.75rem;
-  color: var(--text-subtle);
-}
-
-.pill-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 999px;
-  background: #22c55e;
-}
-
-/* ============================================================
-   ADMIN MODE – MASTER TEMPLATE EDITOR
-   ============================================================ */
-
-/* ----- Header ----- */
 
 .admin-header {
-  padding: 16px 18px 14px;
+  margin-bottom: 12px;
+  padding: 18px 20px;
 }
 
 .admin-header h1 {
-  font-size: 1.8rem;
+  font-size: 1.7rem;
+  margin-bottom: 4px;
 }
 
 .admin-header p {
-  margin-top: 4px;
   font-size: 0.9rem;
-  color: var(--text-subtle);
+  color: var(--text-muted);
 }
 
 .admin-header-buttons {
+  margin-top: 14px;
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 12px;
 }
 
-/* ----- Section card ----- */
+/* ============================================================
+   ADMIN – SECTIONS
+   ============================================================ */
 
 .admin-section-card {
-  padding: 0;
+  background: #eef2ff;
+  border-radius: 20px;
+  padding: 14px 14px 14px;
 }
 
-/* Section header band */
-
 .admin-section-header {
-  background: var(--section-header-bg);
-  border-bottom: 1px solid var(--section-header-border);
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-  padding: 9px 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px 4px;
 }
-
-/* Left side: toggle + title */
 
 .admin-section-left {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   flex: 1;
+  min-width: 0;
+}
+
+.btn-toggle {
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  background: #ffffff;
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-main);
+}
+
+.btn-toggle:hover {
+  background: #f3f4ff;
 }
 
 .admin-section-title-wrap {
@@ -412,49 +211,60 @@ button {
 
 .admin-section-title-input {
   width: 100%;
-  border: none;
-  background: transparent;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  padding: 7px 13px;
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--text-main);
-}
-
-.admin-section-title-input::placeholder {
-  color: var(--text-muted);
+  background: #ffffff;
 }
 
 .admin-section-title-input:focus {
   outline: none;
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 1px var(--accent-blue-soft);
 }
 
-/* Body of section */
+.admin-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
+/* Body of a section (subsections) */
 .admin-section-body {
-  padding: 8px 10px 10px;
+  margin-top: 8px;
+  padding: 10px 10px 4px;
+  border-radius: var(--radius-md);
 }
 
-/* ----- Subsections ----- */
+/* ============================================================
+   ADMIN – SUBSECTIONS
+   ============================================================ */
 
 .admin-subsection {
-  background: var(--surface-variant);
+  background: var(--bg-subsection);
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-soft);
-  padding: 10px 10px 12px;
+  border: 1px solid var(--border-subtle);
   margin-bottom: 10px;
+  padding: 10px 12px 10px;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
 }
 
 .admin-subsection-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 4px;
+  gap: 10px;
+  margin-bottom: 6px;
 }
 
 .admin-subsection-left {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   flex: 1;
+  min-width: 0;
 }
 
 .admin-subsection-title-wrap {
@@ -463,88 +273,148 @@ button {
 
 .admin-subsection-title-input {
   width: 100%;
-  border: none;
-  background: transparent;
-  font-size: 0.98rem;
-  font-weight: 500;
-}
-
-.admin-subsection-title-input::placeholder {
-  color: var(--text-muted);
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  padding: 6px 12px;
+  font-size: 1.02rem;
+  font-weight: 550;
+  background: #ffffff;
 }
 
 .admin-subsection-title-input:focus {
   outline: none;
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 1px var(--accent-blue-soft);
 }
-
-/* Inner body (tasks list) */
 
 .admin-subsection-body {
-  padding: 4px 4px 2px;
-}
-
-.admin-tasks {
   margin-top: 4px;
+  padding-top: 2px;
 }
 
-/* ----- Tasks ----- */
+/* ============================================================
+   ADMIN – ICON-ONLY BUTTONS
+   ============================================================ */
+
+.admin-arrow-group,
+.admin-task-toprow .admin-arrow-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-icon-btn {
+  background: none;
+  border: none;
+  padding: 2px 4px;
+  margin: 0;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.12s ease, color 0.15s ease;
+}
+
+.admin-icon-btn.arrow {
+  font-size: 14px;
+}
+
+.admin-icon-btn.duplicate {
+  font-size: 15px;
+}
+
+.admin-icon-btn.delete {
+  color: #e11d48;
+}
+
+.admin-icon-btn:hover {
+  transform: scale(1.15);
+  color: #1d4ed8;
+}
+
+.admin-icon-btn.delete:hover {
+  color: #be123c;
+}
+
+.admin-icon-btn:disabled,
+.admin-icon-btn[disabled] {
+  opacity: 0.35;
+  cursor: default;
+  transform: none;
+}
+
+/* ============================================================
+   ADMIN – TASKS
+   ============================================================ */
 
 .admin-task {
-  background: var(--surface);
+  background: #ffffff;
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-soft);
-  padding: 8px 10px;
-  margin: 6px 4px; /* a bit more inset from right edge */
+  border: 1px solid var(--border-subtle);
+  padding: 10px 12px 10px;
+  margin-top: 8px;
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.04);
 }
 
 .admin-task-toprow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 4px;
+  gap: 10px;
+  margin-bottom: 6px;
 }
 
-/* Labels: lighter hierarchy */
-
 .admin-task-label {
-  font-size: 0.78rem;
-  font-weight: 400;
+  font-size: 0.86rem;
+  font-weight: 500;
   color: var(--text-muted);
 }
 
-/* Textareas: fixed window + scrollbar when long */
-
+/* Task description textarea */
 .admin-task-textarea,
 .admin-task-notearea {
   width: 100%;
-  max-width: 100%;
   box-sizing: border-box;
-  border-radius: var(--radius-xs);
+  border-radius: 999px;
   border: 1px solid var(--border-subtle);
-  padding: 8px 10px;
-  font-size: 0.92rem;
-  line-height: 1.4;
-  background: #ffffff;
-
-  /* New better defaults */
-  min-height: 120px;    /* TASK: tall by default */
-  max-height: 600px;
-  resize: none;
+  padding: 8px 13px;
+  font-size: 0.96rem;
+  background: #f9fafb;
+  resize: none; /* autoresize via JS */
+  max-height: 220px;
   overflow-y: auto;
 }
 
-.admin-task-notearea {
-  min-height: 100px;    /* NOTES slightly shorter */
+.admin-task-textarea {
+  margin-bottom: 6px;
 }
 
-/* Bottom “Add Section” card */
+.admin-task-notearea {
+  border-radius: 999px;
+}
 
-.admin-add-section-bottom {
-  padding: 10px 12px;
+.admin-task-textarea:focus,
+.admin-task-notearea:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 1px var(--accent-blue-soft);
+  background: #ffffff;
 }
 
 /* ============================================================
-   MODAL (Export JSON)
+   ADMIN – BOTTOM ADD SECTION
+   ============================================================ */
+
+.admin-add-section-bottom {
+  padding: 10px 14px;
+  text-align: center;
+}
+
+/* ============================================================
+   ADMIN – MODAL
    ============================================================ */
 
 .admin-modal-backdrop {
@@ -552,118 +422,144 @@ button {
   inset: 0;
   background: rgba(15, 23, 42, 0.35);
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 40;
 }
 
 .admin-modal {
-  margin-top: 8vh;
-  background: var(--surface);
-  border-radius: var(--radius-lg);
-  max-width: 600px;
-  width: calc(100% - 32px);
+  background: #ffffff;
+  border-radius: 18px;
   padding: 18px 18px 16px;
-  box-shadow: var(--shadow-hover);
+  max-width: 640px;
+  width: calc(100% - 32px);
+  box-shadow: var(--shadow-soft);
 }
 
 .admin-modal h2 {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   margin-bottom: 6px;
 }
 
 .admin-modal p {
-  font-size: 0.9rem;
-  color: var(--text-subtle);
-  margin-bottom: 8px;
+  font-size: 0.86rem;
+  color: var(--text-muted);
+  margin-bottom: 10px;
 }
 
 .admin-modal-textarea {
   width: 100%;
-  min-height: 300px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-subtle);
-  padding: 10px;
+  min-height: 220px;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-strong);
+  padding: 8px 10px;
+  resize: vertical;
   margin-bottom: 10px;
 }
 
-.admin-modal .btn-primary {
-  float: right;
+/* ============================================================
+   RUNNER (END-USER CHECKLIST) – LIGHT STYLES
+   ============================================================ */
+
+.runner-header {
+  margin-bottom: 12px;
+}
+
+.runner-header-title {
+  font-size: 1.9rem;
+  margin-bottom: 4px;
+}
+
+.runner-header-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* Very generic; will apply gracefully even if class names differ slightly */
+.runner-section-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px 12px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow-subtle);
+}
+
+.runner-section-title {
+  font-size: 1.25rem;
+  font-weight: 650;
+  margin-bottom: 8px;
+}
+
+.runner-subsection-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 6px;
+  margin-bottom: 4px;
+}
+
+.runner-tasks {
+  margin-top: 4px;
+}
+
+.runner-task-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.96rem;
+  padding: 4px 0;
+}
+
+.runner-task-row input[type="checkbox"] {
+  margin-top: 3px;
+  width: 18px;
+  height: 18px;
+}
+
+.runner-task-label-main {
+  flex: 1;
+}
+
+.runner-task-label-main.completed {
+  text-decoration: line-through;
+  color: #9ca3af;
+}
+
+.runner-task-note {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 2px;
 }
 
 /* ============================================================
-   RESPONSIVE TWEAKS
+   RESPONSIVE
    ============================================================ */
 
-@media (max-width: 600px) {
+@media (max-width: 640px) {
   #app {
     padding: 12px 10px 24px;
   }
 
-  .admin-header {
-    padding: 14px 13px;
+  .card {
+    padding: 14px 14px;
+    border-radius: 14px;
   }
 
   .admin-header h1 {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
   }
 
-  .admin-header-buttons {
-    gap: 8px;
+  .admin-section-title-input {
+    font-size: 1rem;
   }
 
-  .btn-primary,
-  .btn-secondary {
-    padding-inline: 12px;
+  .admin-subsection-title-input {
+    font-size: 0.96rem;
   }
 
-  .runner-task-row {
-    align-items: flex-start;
+  .admin-modal {
+    padding: 16px 14px 14px;
   }
 }
-
-/* ============================================================
-   FIX: Task textareas too narrow
-   ============================================================ */
-
-/* Remove side margin that was reducing width */
-.admin-task {
-  margin: 8px 0;          /* vertical only */
-  padding: 10px 12px;      /* restore inner breathing room */
-}
-
-/* Let the textarea take full width inside the task card */
-.admin-task-textarea,
-.admin-task-notearea {
-  width: 100% !important;
-  max-width: 100% !important;
-  box-sizing: border-box;
-}
-
-/* Fix top row button alignment so they don't shrink text area */
-.admin-task-toprow {
-  display: grid;
-  grid-template-columns: 1fr auto;   /* label on left, buttons right */
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-/* Buttons grouped without pushing into text area */
-.admin-arrow-group,
-.admin-subsection-actions,
-.admin-section-actions {
-  flex-shrink: 0;           /* do NOT shrink */
-}
-
-/* Subsection and section cards get slightly more internal padding */
-.admin-subsection {
-  padding: 12px 14px;
-}
-
-.admin-section-body {
-  padding: 12px 14px;
-}
-
