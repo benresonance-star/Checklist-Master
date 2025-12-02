@@ -210,3 +210,36 @@ body {
   resize: vertical;
 }
 
+/* Arrow buttons for reordering */
+
+.admin-section-header,
+.admin-subsection-header,
+.admin-task-toprow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.admin-section-title-wrap,
+.admin-subsection-title-wrap {
+  flex: 1;
+}
+
+.admin-arrow-group {
+  display: flex;
+  gap: 4px;
+}
+
+.btn-arrow {
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  padding: 2px 6px;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.btn-arrow:hover {
+  background: #e5e7eb;
+}
