@@ -627,3 +627,45 @@ button {
     align-items: flex-start;
   }
 }
+
+/* ============================================================
+   FIX: Task textareas too narrow
+   ============================================================ */
+
+/* Remove side margin that was reducing width */
+.admin-task {
+  margin: 8px 0;          /* vertical only */
+  padding: 10px 12px;      /* restore inner breathing room */
+}
+
+/* Let the textarea take full width inside the task card */
+.admin-task-textarea,
+.admin-task-notearea {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box;
+}
+
+/* Fix top row button alignment so they don't shrink text area */
+.admin-task-toprow {
+  display: grid;
+  grid-template-columns: 1fr auto;   /* label on left, buttons right */
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+/* Buttons grouped without pushing into text area */
+.admin-arrow-group,
+.admin-subsection-actions,
+.admin-section-actions {
+  flex-shrink: 0;           /* do NOT shrink */
+}
+
+/* Subsection and section cards get slightly more internal padding */
+.admin-subsection {
+  padding: 12px 14px;
+}
+
+.admin-section-body {
+  padding: 12px 14px;
+}
