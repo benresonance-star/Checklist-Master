@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Checklist App</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- Supabase client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+  <div id="app"></div>
+
+  <!-- JS order matters -->
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-api.js"></script>
+  <script src="js/master-template.js"></script>
+  <script src="js/state-merge.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/runner-ui.js"></script>
+  <script src="js/admin-ui.js"></script>
+
+  <script>
+    // Router: decides whether to show Runner or Admin mode
+    const params = new URLSearchParams(window.location.search);
+    const mode = params.get('mode') || 'runner';
+
+    if (mode === 'admin') {
+      initAdminUI();
+    } else {
+      initRunnerUI();
+    }
+  </script>
+</body>
+</html>

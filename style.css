@@ -1,0 +1,46 @@
+/* Global resets, typography, colours */
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #f4f4f5;
+}
+
+/* Shared card UI */
+.card {
+  background: #fff;
+  padding: 16px;
+  margin: 12px;
+  border-radius: 12px;
+  box-shadow: 0px 3px 8px rgba(0,0,0,0.08);
+}
+
+/* Task UI - using Style Option 2 (multi-line wrap + indent) */
+.task-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 4px 0;
+}
+
+.task-row input[type=checkbox] {
+  margin-top: 4px; /* aligns to top of first line of task text */
+}
+
+.task-text {
+  flex: 1;
+  white-space: normal;
+  line-height: 1.35;
+}
+
+.task-text.completed {
+  text-decoration: line-through;
+  color: #999;
+}
+
+/* Notes box */
+.task-note {
+  font-size: 0.85rem;
+  color: #555;
+  margin-top: 6px;
+  padding-left: 26px;
+}
