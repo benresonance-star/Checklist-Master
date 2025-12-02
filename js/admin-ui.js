@@ -1,21 +1,26 @@
-// ----------------------------------------------------
-// Admin Mode UI — Master Template Editor
-// ----------------------------------------------------
-// v1.2 — collapse toggles, duplicate, autofocus, prune-on-export
-// ----------------------------------------------------
+//
+// =============================================================
+//  ADMIN MODE – MASTER TEMPLATE EDITOR
+//  Full rewrite v3.2 (with autosize + persistent heights)
+// =============================================================
+//
 
-const MASTER_DRAFT_KEY = "masterChecklistDraftV1";
+// Local draft key
+const MASTER_DRAFT_KEY = "masterChecklistDraftV3";
+
+// Current working master object (local draft)
 let currentMaster = null;
 
-// ----------------------------------------------------
-// Init & Draft Handling
-// ----------------------------------------------------
+// =============================================================
+// INIT
+// =============================================================
 
 function initAdminUI() {
   loadMasterDraft();
   renderAdminUI();
 }
 
+// Load draft from localStorage or clone MASTER_CHECKLIST
 function loadMasterDraft() {
   try {
     const raw = localStorage.getItem(MASTER_DRAFT_KEY);
@@ -24,11 +29,11 @@ function loadMasterDraft() {
       return;
     }
   } catch (e) {
-    console.warn("Error loading master draft, falling back to default", e);
+    console.warn("Failed to load draft, using default.", e);
   }
 
-  // Fallback: deep-clone the shipped MASTER_CHECKLIST
-  currentMaster = deepClone(window.MASTER_CHECKLIST);
+  // fallback to original template
+  currentMaster = JSON.parse(JSON.stringify(window.MASTER_CHECKLIST));
   saveMasterDraft();
 }
 
@@ -36,625 +41,487 @@ function saveMasterDraft() {
   try {
     localStorage.setItem(MASTER_DRAFT_KEY, JSON.stringify(currentMaster));
   } catch (e) {
-    console.warn("Error saving master draft", e);
+    console.warn("Failed to save master draft.", e);
   }
 }
 
-// Still available if we want to wire a button later
-function resetMasterDraftToOriginal() {
-  if (!confirm("Reset draft to original MASTER_CHECKLIST? This cannot be undone.")) return;
-  currentMaster = deepClone(window.MASTER_CHECKLIST);
-  saveMasterDraft();
-  renderAdminUI();
+// =============================================================
+// UTILITIES
+// =============================================================
+
+// Helper: create element
+function el(tag, className, text) {
+  const x = document.createElement(tag);
+  if (className) x.className = className;
+  if (text) x.textContent = text;
+  return x;
 }
 
-// Simple deep-clone helper
-function deepClone(obj) {
-  return JSON.parse(JSON.stringify(obj));
+// Helper: query
+function qs(sel) {
+  return document.querySelector(sel);
 }
 
-// ----------------------------------------------------
-// Reorder / Delete / Duplicate helpers
-// ----------------------------------------------------
+// Make an ID
+function makeId(prefix) {
+  return prefix + "_" + Math.random().toString(36).slice(2, 10);
+}
 
+// Auto resize textarea
+function autoresize(el) {
+  el.style.height = "auto";
+  el.style.height = (el.scrollHeight + 2) + "px";
+}
+
+// Move item up
 function moveUp(list, index) {
-  if (!Array.isArray(list)) return;
-  if (index <= 0 || index >= list.length) return;
+  if (index <= 0) return;
   [list[index - 1], list[index]] = [list[index], list[index - 1]];
   renumber(list);
 }
 
+// Move item down
 function moveDown(list, index) {
-  if (!Array.isArray(list)) return;
-  if (index < 0 || index >= list.length - 1) return;
+  if (index >= list.length - 1) return;
   [list[index + 1], list[index]] = [list[index], list[index + 1]];
   renumber(list);
 }
 
+// Renumber items by order
 function renumber(list) {
-  if (!Array.isArray(list)) return;
-  list.forEach((item, i) => {
-    item.order = i + 1;
-  });
+  list.forEach((item, i) => (item.order = i + 1));
   saveMasterDraft();
 }
 
-// Delete helpers
-
-function deleteSection(sectionIndex) {
-  if (!confirm("Delete this section and all its subsections and tasks?")) return;
-  if (!Array.isArray(currentMaster.sections)) return;
-  currentMaster.sections.splice(sectionIndex, 1);
-  renumber(currentMaster.sections);
-  renderAdminUI();
-}
-
-function deleteSubsection(section, subIndex) {
-  if (!confirm("Delete this subsection and all its tasks?")) return;
-  if (!Array.isArray(section.subsections)) return;
-  section.subsections.splice(subIndex, 1);
-  renumber(section.subsections);
-  renderAdminUI();
-}
-
-function deleteTask(subsection, taskIndex) {
-  if (!confirm("Delete this task?")) return;
-  if (!Array.isArray(subsection.tasks)) return;
-  subsection.tasks.splice(taskIndex, 1);
-  renumber(subsection.tasks);
-  renderAdminUI();
-}
-
-// Duplicate helpers
-
-function duplicateSection(sectionIndex) {
-  if (!Array.isArray(currentMaster.sections)) return;
-  const original = currentMaster.sections[sectionIndex];
-  if (!original) return;
-
-  const clone = deepClone(original);
-  reassignSectionIds(clone);
-
-  currentMaster.sections.splice(sectionIndex + 1, 0, clone);
-  renumber(currentMaster.sections);
-  saveMasterDraft();
-  renderAdminUI();
-  focusAndScroll(`[data-section-id="${clone.id}"] .admin-section-title-input`);
-}
-
-function duplicateSubsection(section, subIndex) {
-  if (!Array.isArray(section.subsections)) return;
-  const original = section.subsections[subIndex];
-  if (!original) return;
-
-  const clone = deepClone(original);
-  clone.id = makeId("sub");
-  if (Array.isArray(clone.tasks)) {
-    clone.tasks.forEach((t) => {
-      t.id = makeId("task");
-    });
-  }
-
-  section.subsections.splice(subIndex + 1, 0, clone);
-  renumber(section.subsections);
-  saveMasterDraft();
-  renderAdminUI();
-  focusAndScroll(`[data-subsection-id="${clone.id}"] .admin-subsection-title-input`);
-}
-
-function duplicateTask(subsection, taskIndex) {
-  if (!Array.isArray(subsection.tasks)) return;
-  const original = subsection.tasks[taskIndex];
-  if (!original) return;
-
-  const clone = deepClone(original);
-  clone.id = makeId("task");
-
-  subsection.tasks.splice(taskIndex + 1, 0, clone);
-  renumber(subsection.tasks);
-  saveMasterDraft();
-  renderAdminUI();
-  focusAndScroll(`[data-task-id="${clone.id}"] .admin-task-textarea`);
-}
-
-// Reassign IDs for a whole section hierarchy
-function reassignSectionIds(section) {
-  section.id = makeId("sec");
-  if (Array.isArray(section.subsections)) {
-    section.subsections.forEach((sub) => {
-      sub.id = makeId("sub");
-      if (Array.isArray(sub.tasks)) {
-        sub.tasks.forEach((task) => {
-          task.id = makeId("task");
-        });
-      }
-    });
-  }
-}
-
-// ----------------------------------------------------
-// Focus + Scroll helper (for new / duplicated items)
-// ----------------------------------------------------
-
-function focusAndScroll(selector) {
-  const node = document.querySelector(selector);
-  if (!node) return;
-  node.focus();
-  try {
-    node.scrollIntoView({ behavior: "smooth", block: "center" });
-  } catch (_) {
-    // Older browsers: ignore
-  }
-}
-
-// ----------------------------------------------------
-// Auto-resize textareas so full content is visible
-// ----------------------------------------------------
-function autoResizeTextArea(textarea) {
-  if (!textarea) return;
-
-  const resize = () => {
-    textarea.style.height = "auto";
-    textarea.style.height = textarea.scrollHeight + "px";
-  };
-
-  // Initial sizing
-  resize();
-
-  textarea.addEventListener("input", resize);
-}
-
-
-// ----------------------------------------------------
-// Main Render
-// ----------------------------------------------------
+// =============================================================
+// RENDER ROOT
+// =============================================================
 
 function renderAdminUI() {
   const app = qs("#app");
   app.innerHTML = "";
 
-  // ----- Header card -----
+  // HEADER
   const header = el("div", "card admin-header");
   header.innerHTML = `
     <h1>Admin – Master Template</h1>
     <p>Edit sections, subsections & tasks. Changes autosave locally.</p>
   `;
 
-  const btnRow = el("div", "admin-header-buttons");
-
-  // Only Export JSON at top (no reset, no add-section)
+  // Only “Export JSON”
+  const headerBtns = el("div", "admin-header-buttons");
   const exportBtn = el("button", "btn-primary", "Export JSON");
   exportBtn.addEventListener("click", showExportModal);
 
-  btnRow.appendChild(exportBtn);
-  header.appendChild(btnRow);
+  headerBtns.appendChild(exportBtn);
+  header.appendChild(headerBtns);
   app.appendChild(header);
 
-  // ----- Sections -----
-  if (!Array.isArray(currentMaster.sections)) {
-    currentMaster.sections = [];
-  }
-
+  // Render all sections
   currentMaster.sections
-    .slice()
     .sort((a, b) => (a.order || 0) - (b.order || 0))
-    .forEach((section, sectionIndex) => {
-      app.appendChild(renderSection(section, sectionIndex));
+    .forEach((section, index) => {
+      app.appendChild(renderSection(section, index));
     });
 
-  // Bottom add section card
-  const bottomCard = el("div", "card admin-add-section-bottom");
-  const bottomBtn = el("button", "btn-primary-outline full-width", "＋ Add Section");
-  bottomBtn.addEventListener("click", addSection);
-  bottomCard.appendChild(bottomBtn);
-  app.appendChild(bottomCard);
+  // Add section button at bottom
+  const bottom = el("div", "card admin-add-section-bottom");
+  const addSectionBtn = el("button", "btn-primary-outline full-width", "＋ Add Section");
+  addSectionBtn.addEventListener("click", addSection);
+  bottom.appendChild(addSectionBtn);
+  app.appendChild(bottom);
 }
 
-// ----------------------------------------------------
-// Section Render
-// ----------------------------------------------------
+// =============================================================
+// SECTION RENDER
+// =============================================================
 
 function renderSection(section, sectionIndex) {
   const card = el("div", "card admin-section-card");
-  card.setAttribute("data-section-id", section.id || "");
 
-  // Header with toggle
-  const header = el("div", "admin-section-header");
+  // HEADER
+  const head = el("div", "admin-section-header");
 
+  // Left side (toggle + title)
   const left = el("div", "admin-section-left");
 
-  const toggleBtn = el("button", "btn-arrow btn-toggle", section.collapsed ? "▸" : "▾");
-  toggleBtn.title = section.collapsed ? "Expand section" : "Collapse section";
+  const toggleBtn = el("button", "btn-toggle");
+  toggleBtn.innerHTML = section._collapsed ? "▸" : "▾";
+  toggleBtn.title = "Toggle section";
+
   toggleBtn.addEventListener("click", () => {
-    section.collapsed = !section.collapsed;
+    section._collapsed = !section._collapsed;
     saveMasterDraft();
     renderAdminUI();
   });
 
+  const titleWrap = el("div", "admin-section-title-wrap");
   const titleInput = el("input", "admin-section-title-input");
   titleInput.value = section.title || "";
   titleInput.placeholder = "Section title";
+
   titleInput.addEventListener("input", () => {
     section.title = titleInput.value;
     saveMasterDraft();
   });
 
-  const titleWrap = el("div", "admin-section-title-wrap");
   titleWrap.appendChild(titleInput);
-
   left.appendChild(toggleBtn);
   left.appendChild(titleWrap);
 
-  const actions = el("div", "admin-header-actions");
+  // Right side controls
+  const right = el("div", "admin-header-actions");
 
-  const arrowGroup = el("div", "admin-arrow-group");
-  const upBtn = el("button", "btn-arrow", "▲");
-  const downBtn = el("button", "btn-arrow", "▼");
-
-  upBtn.title = "Move section up";
-  downBtn.title = "Move section down";
-
-  upBtn.addEventListener("click", () => {
+  // Move Up
+  const up = el("button", "btn-arrow", "▲");
+  up.title = "Move section up";
+  up.addEventListener("click", () => {
     moveUp(currentMaster.sections, sectionIndex);
     renderAdminUI();
   });
 
-  downBtn.addEventListener("click", () => {
+  // Move Down
+  const down = el("button", "btn-arrow", "▼");
+  down.title = "Move section down";
+  down.addEventListener("click", () => {
     moveDown(currentMaster.sections, sectionIndex);
     renderAdminUI();
   });
 
-  arrowGroup.appendChild(upBtn);
-  arrowGroup.appendChild(downBtn);
-
-  const duplicateBtn = el("button", "btn-arrow", "⧉");
-  duplicateBtn.title = "Duplicate section";
-  duplicateBtn.addEventListener("click", () => {
-    duplicateSection(sectionIndex);
+  // Duplicate
+  const dup = el("button", "btn-arrow");
+  dup.innerHTML = "⧉";
+  dup.title = "Duplicate section";
+  dup.addEventListener("click", () => {
+    duplicateSection(section);
   });
 
-  const deleteBtn = el("button", "btn-delete", "✕");
-  deleteBtn.title = "Delete section";
-  deleteBtn.addEventListener("click", () => {
-    deleteSection(sectionIndex);
+  // Delete
+  const del = el("button", "btn-delete", "✕");
+  del.title = "Delete section";
+  del.addEventListener("click", () => {
+    if (!confirm("Delete this section?")) return;
+    currentMaster.sections.splice(sectionIndex, 1);
+    renumber(currentMaster.sections);
+    renderAdminUI();
   });
 
-  actions.appendChild(arrowGroup);
-  actions.appendChild(duplicateBtn);
-  actions.appendChild(deleteBtn);
+  right.appendChild(up);
+  right.appendChild(down);
+  right.appendChild(dup);
+  right.appendChild(del);
 
-  header.appendChild(left);
-  header.appendChild(actions);
+  head.appendChild(left);
+  head.appendChild(right);
+  card.appendChild(head);
 
-  card.appendChild(header);
+  // COLLAPSED? Stop here
+  if (section._collapsed) return card;
 
-  // Body (collapsible)
+  // BODY
   const body = el("div", "admin-section-body");
-  if (section.collapsed) {
-    body.style.display = "none";
-    card.appendChild(body);
-    return card;
-  }
 
-  const subsContainer = el("div", "admin-subsections");
-  if (!Array.isArray(section.subsections)) {
-    section.subsections = [];
-  }
-
-  section.subsections
-    .slice()
+  (section.subsections || [])
     .sort((a, b) => (a.order || 0) - (b.order || 0))
-    .forEach((subsection, subIndex) => {
-      subsContainer.appendChild(renderSubsection(section, subsection, subIndex));
+    .forEach((sub, idx) => {
+      body.appendChild(renderSubsection(section, sub, idx));
     });
 
-  body.appendChild(subsContainer);
-
+  // Add Subsection
   const addSubBtn = el("button", "btn-small-outline", "＋ Add Subsection");
+  addSubBtn.style.marginTop = "8px";
   addSubBtn.addEventListener("click", () => addSubsection(section));
-  body.appendChild(addSubBtn);
 
+  body.appendChild(addSubBtn);
   card.appendChild(body);
 
   return card;
 }
 
-// ----------------------------------------------------
-// Subsection Render
-// ----------------------------------------------------
+// =============================================================
+// SUBSECTION RENDER
+// =============================================================
 
 function renderSubsection(section, subsection, subIndex) {
-  const block = el("div", "admin-subsection");
-  block.setAttribute("data-subsection-id", subsection.id || "");
+  const box = el("div", "admin-subsection");
 
-  const header = el("div", "admin-subsection-header");
+  // HEADER
+  const head = el("div", "admin-subsection-header");
 
   const left = el("div", "admin-subsection-left");
 
-  const toggleBtn = el("button", "btn-arrow btn-toggle", subsection.collapsed ? "▸" : "▾");
-  toggleBtn.title = subsection.collapsed ? "Expand subsection" : "Collapse subsection";
+  const toggleBtn = el("button", "btn-toggle");
+  toggleBtn.innerHTML = subsection._collapsed ? "▸" : "▾";
+  toggleBtn.title = "Toggle subsection";
   toggleBtn.addEventListener("click", () => {
-    subsection.collapsed = !subsection.collapsed;
+    subsection._collapsed = !subsection._collapsed;
     saveMasterDraft();
     renderAdminUI();
   });
 
+  const titleWrap = el("div", "admin-subsection-title-wrap");
   const titleInput = el("input", "admin-subsection-title-input");
   titleInput.value = subsection.title || "";
   titleInput.placeholder = "Subsection title";
+
   titleInput.addEventListener("input", () => {
     subsection.title = titleInput.value;
     saveMasterDraft();
   });
 
-  const titleWrap = el("div", "admin-subsection-title-wrap");
   titleWrap.appendChild(titleInput);
-
   left.appendChild(toggleBtn);
   left.appendChild(titleWrap);
 
-  const actions = el("div", "admin-header-actions");
+  const right = el("div", "admin-arrow-group");
 
-  const arrowGroup = el("div", "admin-arrow-group");
-  const upBtn = el("button", "btn-arrow", "▲");
-  const downBtn = el("button", "btn-arrow", "▼");
-
-  upBtn.title = "Move subsection up";
-  downBtn.title = "Move subsection down";
-
-  upBtn.addEventListener("click", () => {
+  // up
+  const up = el("button", "btn-arrow", "▲");
+  up.title = "Move subsection up";
+  up.addEventListener("click", () => {
     moveUp(section.subsections, subIndex);
     renderAdminUI();
   });
 
-  downBtn.addEventListener("click", () => {
+  // down
+  const down = el("button", "btn-arrow", "▼");
+  down.title = "Move subsection down";
+  down.addEventListener("click", () => {
     moveDown(section.subsections, subIndex);
     renderAdminUI();
   });
 
-  arrowGroup.appendChild(upBtn);
-  arrowGroup.appendChild(downBtn);
+  // duplicate
+  const dup = el("button", "btn-arrow", "⧉");
+  dup.title = "Duplicate subsection";
+  dup.addEventListener("click", () => duplicateSubsection(section, subsection));
 
-  const duplicateBtn = el("button", "btn-arrow", "⧉");
-  duplicateBtn.title = "Duplicate subsection";
-  duplicateBtn.addEventListener("click", () => {
-    duplicateSubsection(section, subIndex);
+  // delete
+  const del = el("button", "btn-delete", "✕");
+  del.title = "Delete subsection";
+  del.addEventListener("click", () => {
+    if (!confirm("Delete this subsection?")) return;
+    section.subsections.splice(subIndex, 1);
+    renumber(section.subsections);
+    renderAdminUI();
   });
 
-  const deleteBtn = el("button", "btn-delete", "✕");
-  deleteBtn.title = "Delete subsection";
-  deleteBtn.addEventListener("click", () => {
-    deleteSubsection(section, subIndex);
-  });
+  right.appendChild(up);
+  right.appendChild(down);
+  right.appendChild(dup);
+  right.appendChild(del);
 
-  actions.appendChild(arrowGroup);
-  actions.appendChild(duplicateBtn);
-  actions.appendChild(deleteBtn);
+  head.appendChild(left);
+  head.appendChild(right);
+  box.appendChild(head);
 
-  header.appendChild(left);
-  header.appendChild(actions);
+  // COLLAPSED?
+  if (subsection._collapsed) return box;
 
-  block.appendChild(header);
-
+  // BODY
   const body = el("div", "admin-subsection-body");
-  if (subsection.collapsed) {
-    body.style.display = "none";
-    block.appendChild(body);
-    return block;
-  }
 
-  // ----- Tasks -----
-  const tasksContainer = el("div", "admin-tasks");
-
-  if (!Array.isArray(subsection.tasks)) {
-    subsection.tasks = [];
-  }
-
-  subsection.tasks
-    .slice()
+  (subsection.tasks || [])
     .sort((a, b) => (a.order || 0) - (b.order || 0))
-    .forEach((task, taskIndex) => {
-      tasksContainer.appendChild(renderTask(subsection, task, taskIndex));
+    .forEach((task, tIndex) => {
+      body.appendChild(renderTask(subsection, task, tIndex));
     });
 
-  body.appendChild(tasksContainer);
-
   const addTaskBtn = el("button", "btn-small-outline", "＋ Add Task");
+  addTaskBtn.style.marginTop = "6px";
   addTaskBtn.addEventListener("click", () => addTask(subsection));
+
   body.appendChild(addTaskBtn);
+  box.appendChild(body);
 
-  block.appendChild(body);
-
-  return block;
+  return box;
 }
 
-// ----------------------------------------------------
-// Task Render
-// ----------------------------------------------------
+// =============================================================
+// TASK RENDER
+// =============================================================
 
 function renderTask(subsection, task, taskIndex) {
-  const wrapper = el("div", "admin-task");
-  wrapper.setAttribute("data-task-id", task.id || "");
+  const wrap = el("div", "admin-task");
 
-  const topRow = el("div", "admin-task-toprow");
+  // TOP ROW (label + controls)
+  const top = el("div", "admin-task-toprow");
 
-  const label = el("span", "admin-task-label", "Task");
+  const lbl = el("span", "admin-task-label", "Task");
+  top.appendChild(lbl);
 
-  const actions = el("div", "admin-header-actions");
-  const arrowGroup = el("div", "admin-arrow-group");
+  const right = el("div", "admin-arrow-group");
 
-  const upBtn = el("button", "btn-arrow", "▲");
-  const downBtn = el("button", "btn-arrow", "▼");
-
-  upBtn.title = "Move task up";
-  downBtn.title = "Move task down";
-
-  upBtn.addEventListener("click", () => {
+  // Up
+  const up = el("button", "btn-arrow", "▲");
+  up.title = "Move task up";
+  up.addEventListener("click", () => {
     moveUp(subsection.tasks, taskIndex);
     renderAdminUI();
   });
 
-  downBtn.addEventListener("click", () => {
+  // Down
+  const down = el("button", "btn-arrow", "▼");
+  down.title = "Move task down";
+  down.addEventListener("click", () => {
     moveDown(subsection.tasks, taskIndex);
     renderAdminUI();
   });
 
-  arrowGroup.appendChild(upBtn);
-  arrowGroup.appendChild(downBtn);
+  // Duplicate
+  const dup = el("button", "btn-arrow", "⧉");
+  dup.title = "Duplicate task";
+  dup.addEventListener("click", () => duplicateTask(subsection, task));
 
-  const duplicateBtn = el("button", "btn-arrow", "⧉");
-  duplicateBtn.title = "Duplicate task";
-  duplicateBtn.addEventListener("click", () => {
-    duplicateTask(subsection, taskIndex);
+  // Delete
+  const del = el("button", "btn-delete", "✕");
+  del.title = "Delete task";
+  del.addEventListener("click", () => {
+    if (!confirm("Delete this task?")) return;
+    subsection.tasks.splice(taskIndex, 1);
+    renumber(subsection.tasks);
+    renderAdminUI();
   });
 
-  const deleteBtn = el("button", "btn-delete", "✕");
-  deleteBtn.title = "Delete task";
-  deleteBtn.addEventListener("click", () => {
-    deleteTask(subsection, taskIndex);
-  });
+  right.appendChild(up);
+  right.appendChild(down);
+  right.appendChild(dup);
+  right.appendChild(del);
+  top.appendChild(right);
 
-  actions.appendChild(arrowGroup);
-  actions.appendChild(duplicateBtn);
-  actions.appendChild(deleteBtn);
+  wrap.appendChild(top);
 
-  topRow.appendChild(label);
-  topRow.appendChild(actions);
+  // TEXTAREA – Task description
+  const textarea = el("textarea", "admin-task-textarea");
+  textarea.value = task.text || "";
+  textarea.placeholder = "Task description";
 
-  // Task description
-  const textArea = el("textarea", "admin-task-textarea");
-  textArea.value = task.text || "";
-  textArea.placeholder = "Task description (can be multi-line)";
-  textArea.addEventListener("input", () => {
-    task.text = textArea.value;
+  // restore height if saved
+  if (task._height) textarea.style.height = task._height + "px";
+  autoresize(textarea);
+
+  textarea.addEventListener("input", () => {
+    task.text = textarea.value;
+    task._height = textarea.scrollHeight;
+    autoresize(textarea);
     saveMasterDraft();
   });
-  autoResizeTextArea(textArea);
 
-  // Optional note / guidance
-  const noteLabel = el("label", "admin-task-label", "Master note (optional guidance / URL)");
-  const noteArea = el("textarea", "admin-task-textarea admin-task-notearea");
+  wrap.appendChild(textarea);
+
+  // NOTE LABEL
+  const noteLabel = el("div", "admin-task-label", "Master note (optional guidance / URL)");
+  wrap.appendChild(noteLabel);
+
+  // TEXTAREA – Note
+  const noteArea = el("textarea", "admin-task-notearea");
   noteArea.value = task.note || "";
-  noteArea.placeholder = "Optional guidance, URL, or explanation for this task.";
+  noteArea.placeholder = "Optional guidance, URL, or extra info";
+
+  if (task._noteHeight) noteArea.style.height = task._noteHeight + "px";
+  autoresize(noteArea);
+
   noteArea.addEventListener("input", () => {
     task.note = noteArea.value;
+    task._noteHeight = noteArea.scrollHeight;
+    autoresize(noteArea);
     saveMasterDraft();
   });
-  autoResizeTextArea(noteArea);
 
-  wrapper.appendChild(topRow);
-  wrapper.appendChild(textArea);
-  wrapper.appendChild(noteLabel);
-  wrapper.appendChild(noteArea);
+  wrap.appendChild(noteArea);
 
-  return wrapper;
+  return wrap;
 }
 
-// ----------------------------------------------------
-// Add helpers (with autofocus + scroll)
-// ----------------------------------------------------
+// =============================================================
+// ADD / DUPLICATE ACTIONS
+// =============================================================
 
 function addSection() {
-  if (!Array.isArray(currentMaster.sections)) {
-    currentMaster.sections = [];
-  }
-  const newSection = {
+  currentMaster.sections.push({
     id: makeId("sec"),
     title: "New Section",
     order: currentMaster.sections.length + 1,
     subsections: [],
-    collapsed: false
-  };
-  currentMaster.sections.push(newSection);
+    _collapsed: false
+  });
   saveMasterDraft();
   renderAdminUI();
-  focusAndScroll(`[data-section-id="${newSection.id}"] .admin-section-title-input`);
 }
 
 function addSubsection(section) {
-  if (!Array.isArray(section.subsections)) {
-    section.subsections = [];
-  }
-  const newSub = {
+  section.subsections = section.subsections || [];
+  section.subsections.push({
     id: makeId("sub"),
     title: "New Subsection",
     order: section.subsections.length + 1,
     tasks: [],
-    collapsed: false
-  };
-  section.subsections.push(newSub);
+    _collapsed: false
+  });
   saveMasterDraft();
   renderAdminUI();
-  focusAndScroll(`[data-subsection-id="${newSub.id}"] .admin-subsection-title-input`);
 }
 
 function addTask(subsection) {
-  if (!Array.isArray(subsection.tasks)) {
-    subsection.tasks = [];
-  }
-  const newTask = {
+  subsection.tasks = subsection.tasks || [];
+  subsection.tasks.push({
     id: makeId("task"),
+    order: subsection.tasks.length + 1,
     text: "New task",
-    note: "",
-    order: subsection.tasks.length + 1
-  };
-  subsection.tasks.push(newTask);
+    note: ""
+  });
   saveMasterDraft();
   renderAdminUI();
-  focusAndScroll(`[data-task-id="${newTask.id}"] .admin-task-textarea`);
 }
 
-// ----------------------------------------------------
-// Export Modal (with prune of empty items)
-// ----------------------------------------------------
-
-function buildCleanMaster() {
-  const copy = deepClone(currentMaster);
-  copy.sections = (copy.sections || []).filter((section) => {
-    section.title = (section.title || "").trim();
-    section.subsections = (section.subsections || []).filter((sub) => {
-      sub.title = (sub.title || "").trim();
-      sub.tasks = (sub.tasks || []).filter((task) => {
-        task.text = (task.text || "").trim();
-        return !!task.text;
-      });
-      return sub.title || sub.tasks.length > 0;
-    });
-    return section.title || section.subsections.length > 0;
-  });
-  return copy;
+function duplicateSection(section) {
+  const clone = JSON.parse(JSON.stringify(section));
+  clone.id = makeId("sec");
+  currentMaster.sections.push(clone);
+  renumber(currentMaster.sections);
+  renderAdminUI();
 }
+
+function duplicateSubsection(section, subsection) {
+  const clone = JSON.parse(JSON.stringify(subsection));
+  clone.id = makeId("sub");
+  section.subsections.push(clone);
+  renumber(section.subsections);
+  renderAdminUI();
+}
+
+function duplicateTask(subsection, task) {
+  const clone = JSON.parse(JSON.stringify(task));
+  clone.id = makeId("task");
+  subsection.tasks.push(clone);
+  renumber(subsection.tasks);
+  renderAdminUI();
+}
+
+// =============================================================
+// EXPORT MODAL
+// =============================================================
 
 function showExportModal() {
-  const cleaned = buildCleanMaster();
-  const json = JSON.stringify(cleaned, null, 2);
+  const json = JSON.stringify(currentMaster, null, 2);
 
   const overlay = el("div", "admin-modal-backdrop");
   const modal = el("div", "admin-modal");
 
-  const title = el("h2", null, "Export Master Template JSON");
-  const info = el(
-    "p",
-    null,
-    "Copy this JSON into master-template.js, replacing window.MASTER_CHECKLIST, then commit to GitHub."
-  );
+  const h = el("h2", "", "Export Master Template JSON");
+  const p = el("p", "", "Copy this JSON into master-template.js and commit to GitHub.");
 
-  const textarea = el("textarea", "admin-modal-textarea");
-  textarea.value = json;
+  const ta = el("textarea", "admin-modal-textarea");
+  ta.value = json;
 
-  const closeBtn = el("button", "btn-primary", "Close");
-  closeBtn.addEventListener("click", () => {
-    document.body.removeChild(overlay);
-  });
+  const close = el("button", "btn-primary", "Close");
+  close.addEventListener("click", () => document.body.removeChild(overlay));
 
-  modal.appendChild(title);
-  modal.appendChild(info);
-  modal.appendChild(textarea);
-  modal.appendChild(closeBtn);
+  modal.appendChild(h);
+  modal.appendChild(p);
+  modal.appendChild(ta);
+  modal.appendChild(close);
+
   overlay.appendChild(modal);
-
   document.body.appendChild(overlay);
 }
-
-
-
