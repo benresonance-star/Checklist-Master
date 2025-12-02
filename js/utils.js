@@ -36,3 +36,8 @@ function el(type, className, fill) {
 function makeId(prefix) {
   return prefix + "-" + Math.random().toString(36).slice(2, 10);
 }
+
+export function autoresize(el) {
+  el.style.height = "auto";
+  el.style.height = (el.scrollHeight + 2) + "px";
+}
