@@ -517,27 +517,24 @@ button {
 .admin-task-textarea,
 .admin-task-notearea {
   width: 100%;
+  max-width: 100%;
   box-sizing: border-box;
   border-radius: var(--radius-xs);
   border: 1px solid var(--border-subtle);
-  padding: 6px 8px;
-  font-size: 0.9rem;
-  line-height: 1.25;
-  background: #fcfcfc;
-  resize: none;          /* JS auto-resize, but we'll cap via max-height */
-  min-height: 44px;
-  max-height: 140px;     /* window height */
-  overflow-y: auto;      /* scroll when content exceeds */
-}
+  padding: 8px 10px;
+  font-size: 0.92rem;
+  line-height: 1.4;
+  background: #ffffff;
 
-.admin-task-textarea:focus,
-.admin-task-notearea:focus {
-  outline: 2px solid var(--accent);
-  border-color: var(--accent);
+  /* New better defaults */
+  min-height: 120px;    /* TASK: tall by default */
+  max-height: 600px;
+  resize: none;
+  overflow-y: auto;
 }
 
 .admin-task-notearea {
-  margin-top: 4px;
+  min-height: 100px;    /* NOTES slightly shorter */
 }
 
 /* Bottom “Add Section” card */
@@ -669,3 +666,4 @@ button {
 .admin-section-body {
   padding: 12px 14px;
 }
+
