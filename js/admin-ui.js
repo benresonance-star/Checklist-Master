@@ -70,6 +70,29 @@ function renumber(list) {
   saveMasterDraft();
 }
 
+// ---------- Delete helpers ----------
+
+function deleteSection(sectionIndex) {
+  if (!confirm("Delete this section and all its subsections and tasks?")) return;
+  currentMaster.sections.splice(sectionIndex, 1);
+  renumber(currentMaster.sections);
+  renderAdminUI();
+}
+
+function deleteSubsection(section, subIndex) {
+  if (!confirm("Delete this subsection and all its tasks?")) return;
+  section.subsections.splice(subIndex, 1);
+  renumber(section.subsections);
+  renderAdminUI();
+}
+
+function deleteTask(subsection, taskIndex) {
+  if (!confirm("Delete this task?")) return;
+  subsection.tasks.splice(taskIndex, 1);
+  renumber(subsection.tasks);
+  renderAdminUI();
+}
+
 // ---------- Main render ----------
 
 function renderAdminUI() {
@@ -385,4 +408,5 @@ function showExportModal() {
 
   document.body.appendChild(overlay);
 }
+
 
