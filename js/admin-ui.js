@@ -95,79 +95,51 @@ function deleteTask(subsection, taskIndex) {
 
 // ---------- Main render ----------
 
-function renderAdminSubsection(section, subsection, subIndex) {
-  const block = el("div", "admin-subsection");
+function renderAdminUI() {
+  const app = qs("#app");
+  app.innerHTML = "";
 
-  const header = el("div", "admin-subsection-header");
+  // --- Header ---
+  const header = el("div", "card admin-header");
+  header.innerHTML = `
+    <h1>Admin – Master Template</h1>
+    <p>Edit sections, subsections and tasks. Changes are saved locally as a draft.</p>
+  `;
 
-  const titleInput = el("input", "admin-subsection-title-input");
-  titleInput.value = subsection.title || "";
-  titleInput.placeholder = "Subsection title";
+  const btnRow = el("div", "admin-header-buttons");
 
-  titleInput.addEventListener("input", () => {
-    subsection.title = titleInput.value;
-    saveMasterDraft();
+  const exportBtn = el("button", "btn-primary", "Export JSON");
+  exportBtn.addEventListener("click", showExportModal);
+
+  const resetBtn = el("button", "btn-secondary", "Reset draft to original");
+  resetBtn.addEventListener("click", resetMasterDraftToOriginal);
+
+  const addSectionBtnTop = el("button", "btn-primary-outline", "＋ Add Section");
+  addSectionBtnTop.addEventListener("click", () => {
+    addSection();
   });
 
-  const titleWrap = el("div", "admin-subsection-title-wrap");
-  titleWrap.appendChild(titleInput);
+  btnRow.appendChild(exportBtn);
+  btnRow.appendChild(resetBtn);
+  btnRow.appendChild(addSectionBtnTop);
+  header.appendChild(btnRow);
+  app.appendChild(header);
 
-  // Right side: arrows + delete
-  const actions = el("div", "admin-header-actions");
-
-  const arrowGroup = el("div", "admin-arrow-group");
-  const upBtn = el("button", "btn-arrow", "▲");
-  const downBtn = el("button", "btn-arrow", "▼");
-
-  upBtn.title = "Move subsection up";
-  downBtn.title = "Move subsection down";
-
-  upBtn.addEventListener("click", () => {
-    section.subsections = section.subsections || [];
-    moveUp(section.subsections, subIndex);
-    renderAdminUI();
-  });
-
-  downBtn.addEventListener("click", () => {
-    section.subsections = section.subsections || [];
-    moveDown(section.subsections, subIndex);
-    renderAdminUI();
-  });
-
-  arrowGroup.appendChild(upBtn);
-  arrowGroup.appendChild(downBtn);
-
-  const deleteBtn = el("button", "btn-delete", "✕");
-  deleteBtn.title = "Delete subsection";
-  deleteBtn.addEventListener("click", () => {
-    deleteSubsection(section, subIndex);
-  });
-
-  actions.appendChild(arrowGroup);
-  actions.appendChild(deleteBtn);
-
-  header.appendChild(titleWrap);
-  header.appendChild(actions);
-
-  block.appendChild(header);
-
-  // Tasks list
-  const tasksContainer = el("div", "admin-tasks");
-  (subsection.tasks || [])
+  // --- Sections ---
+  currentMaster.sections
     .sort((a, b) => (a.order || 0) - (b.order || 0))
-    .forEach((task, tIndex) => {
-      tasksContainer.appendChild(renderAdminTask(subsection, task, tIndex));
+    .forEach((section, sIndex) => {
+      app.appendChild(renderAdminSection(section, sIndex));
     });
 
-  block.appendChild(tasksContainer);
-
-  const addTaskBtn = el("button", "btn-small-outline", "＋ Add Task");
-  addTaskBtn.addEventListener("click", () => {
-    addTask(subsection);
+  // Add-section button at bottom too
+  const addSectionBtnBottom = el("button", "btn-primary-outline full-width", "＋ Add Section");
+  addSectionBtnBottom.addEventListener("click", () => {
+    addSection();
   });
-  block.appendChild(addTaskBtn);
-
-  return block;
+  const addSectionWrapper = el("div", "card admin-add-section-bottom");
+  addSectionWrapper.appendChild(addSectionBtnBottom);
+  app.appendChild(addSectionWrapper);
 }
 
 // ---------- Section / Subsection / Task rendering ----------
@@ -262,6 +234,7 @@ function renderAdminSubsection(section, subsection, subIndex) {
   const titleWrap = el("div", "admin-subsection-title-wrap");
   titleWrap.appendChild(titleInput);
 
+  // Right side: arrows + delete
   const actions = el("div", "admin-header-actions");
 
   const arrowGroup = el("div", "admin-arrow-group");
@@ -322,7 +295,7 @@ function renderAdminSubsection(section, subsection, subIndex) {
 function renderAdminTask(subsection, task, taskIndex) {
   const wrapper = el("div", "admin-task");
 
-  // Header with arrows + delete
+  // Header row: label + arrows + delete
   const topRow = el("div", "admin-task-toprow");
 
   const label = el("span", "admin-task-label");
@@ -469,4 +442,3 @@ function showExportModal() {
 
   document.body.appendChild(overlay);
 }
-
