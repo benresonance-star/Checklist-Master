@@ -1,7 +1,7 @@
 // ----------------------------------------------------
 // Admin Mode UI - edit master template in the browser
 // ----------------------------------------------------
-// v0.2: local-only admin, with simple ▲ / ▼ reordering
+// v0.3: local-only admin with ▲ / ▼ reordering + delete
 // ----------------------------------------------------
 
 const MASTER_DRAFT_KEY = "masterChecklistDraftV1";
@@ -234,6 +234,8 @@ function renderAdminSubsection(section, subsection, subIndex) {
   const titleWrap = el("div", "admin-subsection-title-wrap");
   titleWrap.appendChild(titleInput);
 
+  const actions = el("div", "admin-header-actions");
+
   const arrowGroup = el("div", "admin-arrow-group");
   const upBtn = el("button", "btn-arrow", "▲");
   const downBtn = el("button", "btn-arrow", "▼");
@@ -256,8 +258,17 @@ function renderAdminSubsection(section, subsection, subIndex) {
   arrowGroup.appendChild(upBtn);
   arrowGroup.appendChild(downBtn);
 
+  const deleteBtn = el("button", "btn-delete", "✕");
+  deleteBtn.title = "Delete subsection";
+  deleteBtn.addEventListener("click", () => {
+    deleteSubsection(section, subIndex);
+  });
+
+  actions.appendChild(arrowGroup);
+  actions.appendChild(deleteBtn);
+
   header.appendChild(titleWrap);
-  header.appendChild(arrowGroup);
+  header.appendChild(actions);
 
   block.appendChild(header);
 
@@ -283,11 +294,13 @@ function renderAdminSubsection(section, subsection, subIndex) {
 function renderAdminTask(subsection, task, taskIndex) {
   const wrapper = el("div", "admin-task");
 
-  // Header with arrows
+  // Header with arrows + delete
   const topRow = el("div", "admin-task-toprow");
 
   const label = el("span", "admin-task-label");
   label.textContent = "Task";
+
+  const actions = el("div", "admin-header-actions");
 
   const arrowGroup = el("div", "admin-arrow-group");
   const upBtn = el("button", "btn-arrow", "▲");
@@ -311,8 +324,17 @@ function renderAdminTask(subsection, task, taskIndex) {
   arrowGroup.appendChild(upBtn);
   arrowGroup.appendChild(downBtn);
 
+  const deleteBtn = el("button", "btn-delete", "✕");
+  deleteBtn.title = "Delete task";
+  deleteBtn.addEventListener("click", () => {
+    deleteTask(subsection, taskIndex);
+  });
+
+  actions.appendChild(arrowGroup);
+  actions.appendChild(deleteBtn);
+
   topRow.appendChild(label);
-  topRow.appendChild(arrowGroup);
+  topRow.appendChild(actions);
 
   // Task description textarea
   const textarea = el("textarea", "admin-task-textarea");
@@ -419,6 +441,3 @@ function showExportModal() {
 
   document.body.appendChild(overlay);
 }
-
-
-
