@@ -291,28 +291,29 @@ function renderSubsection(section, subsection, subIndex) {
 
   const right = el("div", "admin-arrow-group");
 
-  const upBtn = el("button", "btn-arrow", "▲");
+  const upBtn = el("button", "admin-icon-btn arrow", "▲");
   upBtn.title = "Move subsection up";
   upBtn.addEventListener("click", function () {
     moveUp(section.subsections, subIndex);
     renderAdminUI();
   });
 
-  const downBtn = el("button", "btn-arrow", "▼");
+  
+  const downBtn = el("button", "admin-icon-btn arrow", "▼");
   downBtn.title = "Move subsection down";
   downBtn.addEventListener("click", function () {
     moveDown(section.subsections, subIndex);
     renderAdminUI();
   });
 
-  const dupBtn = el("button", "btn-arrow");
+  const dupBtn = el("button", "admin-icon-btn duplicate", "⧉");
   dupBtn.innerHTML = "⧉";
   dupBtn.title = "Duplicate subsection";
   dupBtn.addEventListener("click", function () {
     duplicateSubsection(section, subsection);
   });
 
-  const delBtn = el("button", "btn-delete", "✕");
+  const delBtn = el("button", "admin-icon-btn delete", "✕");
   delBtn.title = "Delete subsection";
   delBtn.addEventListener("click", function () {
     if (!confirm("Delete this subsection and all its tasks?")) return;
@@ -574,3 +575,4 @@ function showExportModal() {
   overlay.appendChild(modal);
   document.body.appendChild(overlay);
 }
+
