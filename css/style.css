@@ -1,167 +1,402 @@
 /* ============================================================
-   GLOBAL: Material You + Compact-B (grey–blue)
+   CHECKLIST APP – GLOBAL STYLE
+   Compact Google-ish UI, grey–blue palette
    ============================================================ */
 
+/* ---------- Color + radius tokens ---------- */
+
 :root {
+  /* Surfaces */
   --surface: #ffffff;
   --surface-variant: #f3f4f6;
-  --on-surface: #1f1f1f;
-  --outline: #d0d2d5;
-  --outline-variant: #e4e6ea;
+  --app-bg: #f5f5f7;
 
-  /* Section header tint – soft grey-blue */
-  --accent-section-bg: #eef3ff;
-  --accent-section-border: #d7e1ff;
+  /* Text */
+  --text-main: #1f2933;
+  --text-subtle: #6b7280;
+  --text-muted: #9ca3af;
 
-  --radius-card: 16px;
+  /* Accent / state */
+  --accent: #1a73e8;
+  --accent-soft: #e3f2fd;
+  --accent-strong: #1667cc;
+  --border-subtle: #e5e7eb;
+  --border-soft: #dde1e7;
+  --danger: #d93025;
+  --danger-soft: #fee2e2;
+
+  /* Structural */
+  --section-header-bg: #eef3ff;
+  --section-header-border: #d7e1ff;
+
+  /* Radii */
+  --radius-lg: 18px;
+  --radius-md: 12px;
   --radius-sm: 10px;
-  --radius-xs: 6px;
+  --radius-xs: 7px;
 
-  --shadow-card: 0 2px 6px rgba(0,0,0,0.05);
-  --shadow-hover: 0 3px 10px rgba(0,0,0,0.08);
+  /* Shadows */
+  --shadow-card: 0 2px 6px rgba(15, 23, 42, 0.06);
+  --shadow-hover: 0 3px 10px rgba(15, 23, 42, 0.12);
 
   --transition-fast: 0.18s ease;
 }
 
+/* ---------- Base ---------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
 body {
   margin: 0;
   padding: 0;
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
-  background: #f5f5f7;
-  color: var(--on-surface);
 }
 
-/* ============================================================
-   CARDS & HEADER
-   ============================================================ */
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Segoe UI", sans-serif;
+  background: var(--app-bg);
+  color: var(--text-main);
+}
+
+/* Wrapper that JS mounts into */
+
+#app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 16px 12px 32px;
+}
+
+/* ---------- Generic cards ---------- */
 
 .card {
   background: var(--surface);
-  border-radius: var(--radius-card);
-  padding: 14px 16px;
-  margin: 10px 0;
-  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-soft);
   box-shadow: var(--shadow-card);
+  padding: 14px 16px;
+  margin: 12px 0;
+}
+
+/* ---------- Headings & text ---------- */
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  font-size: 1.9rem;
+}
+
+h2 {
+  font-size: 1.35rem;
+}
+
+h3 {
+  font-size: 1.05rem;
+}
+
+p {
+  margin: 0;
+}
+
+/* ============================================================
+   BUTTONS
+   Shared between runner + admin
+   ============================================================ */
+
+button {
+  font-family: inherit;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  background: transparent;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Primary action (e.g. Export JSON, New instance) */
+
+.btn-primary {
+  background: var(--accent);
+  color: #ffffff;
+  padding: 9px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: var(--shadow-card);
+  transition: background var(--transition-fast), box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.btn-primary:hover {
+  background: var(--accent-strong);
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-1px);
+}
+
+/* Subtle button */
+
+.btn-secondary {
+  background: var(--surface-variant);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  padding: 9px 16px;
+  font-size: 0.9rem;
+  color: var(--text-main);
+}
+
+/* Outline primary */
+
+.btn-primary-outline {
+  background: transparent;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--accent);
+  padding: 8px 14px;
+  font-size: 0.88rem;
+  color: var(--accent);
+}
+
+.btn-small-outline {
+  background: transparent;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--accent);
+  padding: 5px 10px;
+  font-size: 0.84rem;
+  color: var(--accent);
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* Small icon buttons: arrows, duplicate, delete, toggles */
+
+.btn-arrow,
+.btn-delete,
+.btn-toggle {
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: background var(--transition-fast), box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.btn-arrow:hover,
+.btn-delete:hover,
+.btn-toggle:hover {
+  background: #eef0f3;
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-1px);
+}
+
+.btn-delete {
+  color: var(--danger);
+  border-color: #f3b5b5;
+}
+
+/* Chevron toggle slightly smaller */
+
+.btn-toggle {
+  width: 24px;
+  height: 24px;
+}
+
+/* Utility layout for right-side actions */
+
+.admin-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-arrow-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ============================================================
+   RUNNER MODE (project instances)
+   ============================================================ */
+
+/* Top card */
+
+.runner-header {
+  margin-bottom: 8px;
+}
+
+.runner-header-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.runner-header-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-subtle);
+}
+
+/* Section cards */
+
+.runner-section-card {
+  padding: 12px 14px 10px;
+}
+
+.runner-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.runner-section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* Subsections */
+
+.runner-subsection {
+  background: var(--surface-variant);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-soft);
+  padding: 8px 10px 10px;
+  margin-top: 6px;
+}
+
+.runner-subsection-title {
+  font-size: 0.98rem;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+/* Tasks */
+
+.runner-task-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px 4px;
+}
+
+.runner-task-checkbox {
+  margin-top: 2px;
+}
+
+.runner-task-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.runner-task-text {
+  font-size: 0.9rem;
+}
+
+.runner-task-text.completed {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+/* Optional guidance/note (readonly in runner) */
+
+.runner-task-note {
+  font-size: 0.78rem;
+  color: var(--text-subtle);
+  margin-top: 2px;
+}
+
+/* Small pill status (e.g. “Local demo instance”) */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.04);
+  font-size: 0.75rem;
+  color: var(--text-subtle);
+}
+
+.pill-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #22c55e;
+}
+
+/* ============================================================
+   ADMIN MODE – MASTER TEMPLATE EDITOR
+   ============================================================ */
+
+/* ----- Header ----- */
+
+.admin-header {
+  padding: 16px 18px 14px;
 }
 
 .admin-header h1 {
-  margin: 0;
   font-size: 1.8rem;
-  font-weight: 700;
 }
 
 .admin-header p {
-  margin: 4px 0 16px;
-  color: #5f6368;
+  margin-top: 4px;
   font-size: 0.9rem;
+  color: var(--text-subtle);
 }
 
 .admin-header-buttons {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  margin-top: 12px;
 }
 
-/* Align left side (toggle + title) nicely */
-.admin-section-left,
-.admin-subsection-left {
+/* ----- Section card ----- */
+
+.admin-section-card {
+  padding: 0;
+}
+
+/* Section header band */
+
+.admin-section-header {
+  background: var(--section-header-bg);
+  border-bottom: 1px solid var(--section-header-border);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: 9px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Left side: toggle + title */
+
+.admin-section-left {
   display: flex;
   align-items: center;
   gap: 8px;
   flex: 1;
 }
 
-/* Make the toggle a bit smaller */
-.btn-toggle {
-  width: 24px;
-  height: 24px;
-  font-size: 0.8rem;
-}
-
-/* Give subsection body a bit more breathing room */
-.admin-section-body {
-  padding: 8px 10px 10px;
-}
-
-.admin-subsection {
-  padding: 10px 10px 12px;
-  margin-bottom: 10px;
-}
-
-/* Tasks inside subsection – no visual overlap */
-.admin-tasks {
-  margin-top: 4px;
-}
-
-.admin-task {
-  margin-bottom: 6px;
-}
-
-
-/* Buttons */
-
-.btn-primary {
-  background: #1a73e8;
-  color: #ffffff;
-  border: none;
-  padding: 9px 16px;
-  border-radius: var(--radius-sm);
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: var(--transition-fast);
-}
-.btn-primary:hover {
-  background: #1667cc;
-}
-
-.btn-secondary {
-  background: var(--surface-variant);
-  border: 1px solid var(--outline);
-  color: #333;
-  padding: 9px 16px;
-  border-radius: var(--radius-sm);
-  font-size: 0.88rem;
-  cursor: pointer;
-}
-
-.btn-primary-outline {
-  background: transparent;
-  border: 1px solid #1a73e8;
-  color: #1a73e8;
-  padding: 8px 14px;
-  border-radius: var(--radius-sm);
-  font-size: 0.88rem;
-}
-
-.btn-small-outline {
-  background: transparent;
-  padding: 5px 10px;
-  border-radius: var(--radius-xs);
-  border: 1px solid #1a73e8;
-  color: #1a73e8;
-  margin-top: 4px;
-  font-size: 0.84rem;
-}
-
-/* ============================================================
-   SECTION HEADER (grey–blue accent)
-   ============================================================ */
-
-.admin-section-card {
-  padding-top: 0;
-}
-
-.admin-section-header {
-  background: var(--accent-section-bg);
-  border-bottom: 1px solid var(--accent-section-border);
-  border-radius: var(--radius-card) var(--radius-card) 0 0;
-  padding: 10px 12px;
-  margin: 0 0 8px 0;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.admin-section-title-wrap {
+  flex: 1;
 }
 
 .admin-section-title-input {
@@ -170,75 +405,49 @@ body {
   background: transparent;
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--on-surface);
+  color: var(--text-main);
 }
+
+.admin-section-title-input::placeholder {
+  color: var(--text-muted);
+}
+
 .admin-section-title-input:focus {
   outline: none;
 }
 
-/* align arrows + delete on one line */
-.admin-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+/* Body of section */
+
+.admin-section-body {
+  padding: 8px 10px 10px;
 }
 
-/* ============================================================
-   ARROWS + DELETE (smaller, tighter)
-   ============================================================ */
-
-.admin-arrow-group {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.btn-arrow,
-.btn-delete {
-  width: 26px;
-  height: 26px;
-  border-radius: 7px;
-
-  border: 1px solid var(--outline);
-  background: var(--surface);
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.78rem;
-
-  cursor: pointer;
-  transition: var(--transition-fast);
-}
-
-.btn-arrow:hover,
-.btn-delete:hover {
-  background: #eef0f3;
-  box-shadow: var(--shadow-hover);
-}
-
-.btn-delete {
-  color: #d93025;
-  font-weight: 600;
-}
-
-/* ============================================================
-   SUBSECTIONS
-   ============================================================ */
+/* ----- Subsections ----- */
 
 .admin-subsection {
   background: var(--surface-variant);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--outline-variant);
-  padding: 10px;
-  margin-bottom: 8px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-soft);
+  padding: 10px 10px 12px;
+  margin-bottom: 10px;
 }
 
 .admin-subsection-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 6px;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.admin-subsection-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.admin-subsection-title-wrap {
+  flex: 1;
 }
 
 .admin-subsection-title-input {
@@ -248,83 +457,163 @@ body {
   font-size: 0.98rem;
   font-weight: 500;
 }
+
+.admin-subsection-title-input::placeholder {
+  color: var(--text-muted);
+}
+
 .admin-subsection-title-input:focus {
   outline: none;
 }
 
-/* ============================================================
-   TASKS (compact)
-   ============================================================ */
+/* Inner body (tasks list) */
+
+.admin-subsection-body {
+  padding: 4px 4px 2px;
+}
+
+.admin-tasks {
+  margin-top: 4px;
+}
+
+/* ----- Tasks ----- */
 
 .admin-task {
   background: var(--surface);
-  border: 1px solid var(--outline-variant);
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-soft);
   padding: 8px 10px;
-  margin-bottom: 8px;
+  margin: 6px 2px;
 }
 
 .admin-task-toprow {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   margin-bottom: 4px;
 }
 
 .admin-task-label {
   font-size: 0.8rem;
-  color: #6e6e6e;
+  color: var(--text-subtle);
 }
 
-/* compact textareas */
+/* Textareas */
 
 .admin-task-textarea,
 .admin-task-notearea {
   width: 100%;
+  box-sizing: border-box;
   border-radius: var(--radius-xs);
-  border: 1px solid var(--outline);
+  border: 1px solid var(--border-subtle);
   padding: 6px 8px;
   font-size: 0.9rem;
-  resize: vertical;
-  min-height: 32px;
+  resize: none; /* JS handles auto-resize */
   line-height: 1.25;
   background: #fcfcfc;
 }
 
 .admin-task-textarea:focus,
 .admin-task-notearea:focus {
-  outline: 2px solid #1a73e8;
+  outline: 2px solid var(--accent);
+  border-color: var(--accent);
 }
 
 .admin-task-notearea {
   margin-top: 3px;
 }
 
+/* Note label */
+
+.admin-task-label + .admin-task-notearea {
+  margin-top: 4px;
+}
+
+/* Bottom “Add Section” card */
+
+.admin-add-section-bottom {
+  padding: 10px 12px;
+}
+
 /* ============================================================
-   EXPORT MODAL (unchanged except slightly tighter)
+   MODAL (Export JSON)
    ============================================================ */
 
 .admin-modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.4);
+  background: rgba(15, 23, 42, 0.35);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  z-index: 1000;
 }
 
 .admin-modal {
+  margin-top: 8vh;
   background: var(--surface);
-  max-width: 540px;
-  margin: 8vh auto;
-  padding: 20px;
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-lg);
+  max-width: 600px;
+  width: calc(100% - 32px);
+  padding: 18px 18px 16px;
+  box-shadow: var(--shadow-hover);
+}
+
+.admin-modal h2 {
+  font-size: 1.3rem;
+  margin-bottom: 6px;
+}
+
+.admin-modal p {
+  font-size: 0.9rem;
+  color: var(--text-subtle);
+  margin-bottom: 8px;
 }
 
 .admin-modal-textarea {
   width: 100%;
   min-height: 300px;
-  border: 1px solid var(--outline);
-  border-radius: var(--radius-sm);
-  font-size: 0.9rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
   padding: 10px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.admin-modal .btn-primary {
+  float: right;
+}
+
+/* ============================================================
+   RESPONSIVE TWEAKS
+   ============================================================ */
+
+@media (max-width: 600px) {
+  #app {
+    padding: 12px 10px 24px;
+  }
+
+  .admin-header {
+    padding: 14px 13px;
+  }
+
+  .admin-header h1 {
+    font-size: 1.6rem;
+  }
+
+  .admin-header-buttons {
+    gap: 8px;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    padding-inline: 12px;
+  }
+
+  .runner-task-row {
+    align-items: flex-start;
+  }
 }
 
