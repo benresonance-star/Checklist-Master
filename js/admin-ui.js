@@ -1,17 +1,17 @@
 // ----------------------------------------------------
-// Admin Mode UI - edit master template in the browser
+// Admin Mode UI — Master Template Editor
 // ----------------------------------------------------
-// v0.3: local-only admin with ▲ / ▼ reordering + delete
+// v1.0 stable — reorder + delete + autosave draft
 // ----------------------------------------------------
 
 const MASTER_DRAFT_KEY = "masterChecklistDraftV1";
-
 let currentMaster = null;
 
-// ---------- Init & draft handling ----------
+// ----------------------------------------------------
+// Init
+// ----------------------------------------------------
 
 function initAdminUI() {
-  // No auth yet – just a local admin tool
   loadMasterDraft();
   renderAdminUI();
 }
@@ -24,10 +24,9 @@ function loadMasterDraft() {
       return;
     }
   } catch (e) {
-    console.warn("Failed to load master draft, falling back to default.", e);
+    console.warn("Error loading draft, falling back to default", e);
   }
 
-  // Deep clone initial MASTER_CHECKLIST as starting draft
   currentMaster = JSON.parse(JSON.stringify(window.MASTER_CHECKLIST));
   saveMasterDraft();
 }
@@ -36,20 +35,20 @@ function saveMasterDraft() {
   try {
     localStorage.setItem(MASTER_DRAFT_KEY, JSON.stringify(currentMaster));
   } catch (e) {
-    console.warn("Failed to save master draft.", e);
+    console.warn("Error saving draft", e);
   }
 }
 
 function resetMasterDraftToOriginal() {
-  if (!confirm("Reset draft to original MASTER_CHECKLIST? This cannot be undone.")) {
-    return;
-  }
+  if (!confirm("Reset draft to original MASTER_CHECKLIST? This cannot be undone.")) return;
   currentMaster = JSON.parse(JSON.stringify(window.MASTER_CHECKLIST));
   saveMasterDraft();
   renderAdminUI();
 }
 
-// ---------- Reorder helpers (simple ▲ / ▼) ----------
+// ----------------------------------------------------
+// Reorder helpers
+// ----------------------------------------------------
 
 function moveUp(list, index) {
   if (index <= 0) return;
@@ -64,16 +63,16 @@ function moveDown(list, index) {
 }
 
 function renumber(list) {
-  list.forEach((item, i) => {
-    item.order = i + 1;
-  });
+  list.forEach((item, i) => (item.order = i + 1));
   saveMasterDraft();
 }
 
-// ---------- Delete helpers ----------
+// ----------------------------------------------------
+// Delete helpers
+// ----------------------------------------------------
 
 function deleteSection(sectionIndex) {
-  if (!confirm("Delete this section and all its subsections and tasks?")) return;
+  if (!confirm("Delete this section and all its subsections/tasks?")) return;
   currentMaster.sections.splice(sectionIndex, 1);
   renumber(currentMaster.sections);
   renderAdminUI();
@@ -93,131 +92,113 @@ function deleteTask(subsection, taskIndex) {
   renderAdminUI();
 }
 
-// ---------- Main render ----------
+// ----------------------------------------------------
+// UI Render
+// ----------------------------------------------------
 
 function renderAdminUI() {
   const app = qs("#app");
   app.innerHTML = "";
 
-  // --- Header ---
+  // Header
   const header = el("div", "card admin-header");
   header.innerHTML = `
     <h1>Admin – Master Template</h1>
-    <p>Edit sections, subsections and tasks. Changes are saved locally as a draft.</p>
+    <p>Edit sections, subsections & tasks. Changes autosave locally.</p>
   `;
-
-  const btnRow = el("div", "admin-header-buttons");
+  const row = el("div", "admin-header-buttons");
 
   const exportBtn = el("button", "btn-primary", "Export JSON");
-  exportBtn.addEventListener("click", showExportModal);
+  exportBtn.onclick = showExportModal;
 
-  const resetBtn = el("button", "btn-secondary", "Reset draft to original");
-  resetBtn.addEventListener("click", resetMasterDraftToOriginal);
+  const resetBtn = el("button", "btn-secondary", "Reset draft");
+  resetBtn.onclick = resetMasterDraftToOriginal;
 
-  const addSectionBtnTop = el("button", "btn-primary-outline", "＋ Add Section");
-  addSectionBtnTop.addEventListener("click", () => {
-    addSection();
-  });
+  const addBtn = el("button", "btn-primary-outline", "＋ Add Section");
+  addBtn.onclick = addSection;
 
-  btnRow.appendChild(exportBtn);
-  btnRow.appendChild(resetBtn);
-  btnRow.appendChild(addSectionBtnTop);
-  header.appendChild(btnRow);
-  app.appendChild(header);
+  row.append(exportBtn, resetBtn, addBtn);
+  header.append(row);
+  app.append(header);
 
-  // --- Sections ---
+  // Sections
   currentMaster.sections
     .sort((a, b) => (a.order || 0) - (b.order || 0))
-    .forEach((section, sIndex) => {
-      app.appendChild(renderAdminSection(section, sIndex));
-    });
+    .forEach((section, i) => app.append(renderSection(section, i)));
 
-  // Add-section button at bottom too
-  const addSectionBtnBottom = el("button", "btn-primary-outline full-width", "＋ Add Section");
-  addSectionBtnBottom.addEventListener("click", () => {
-    addSection();
-  });
-  const addSectionWrapper = el("div", "card admin-add-section-bottom");
-  addSectionWrapper.appendChild(addSectionBtnBottom);
-  app.appendChild(addSectionWrapper);
+  // Bottom add button
+  const bottom = el("div", "card admin-add-section-bottom");
+  const addBottom = el("button", "btn-primary-outline full-width", "＋ Add Section");
+  addBottom.onclick = addSection;
+  bottom.append(addBottom);
+  app.append(bottom);
 }
 
-// ---------- Section / Subsection / Task rendering ----------
+// ----------------------------------------------------
+// Render Section
+// ----------------------------------------------------
 
-function renderAdminSection(section, sectionIndex) {
+function renderSection(section, sectionIndex) {
   const card = el("div", "card admin-section-card");
 
+  // Header
   const header = el("div", "admin-section-header");
 
-  // Left: title
   const titleInput = el("input", "admin-section-title-input");
   titleInput.value = section.title || "";
   titleInput.placeholder = "Section title";
-
-  titleInput.addEventListener("input", () => {
+  titleInput.oninput = () => {
     section.title = titleInput.value;
     saveMasterDraft();
-  });
+  };
 
   const titleWrap = el("div", "admin-section-title-wrap");
-  titleWrap.appendChild(titleInput);
+  titleWrap.append(titleInput);
 
-  // Right: actions (▲ / ▼ + delete)
+  // Actions: reorder + delete
   const actions = el("div", "admin-header-actions");
 
-  const arrowGroup = el("div", "admin-arrow-group");
-  const upBtn = el("button", "btn-arrow", "▲");
-  const downBtn = el("button", "btn-arrow", "▼");
-
-  upBtn.title = "Move section up";
-  downBtn.title = "Move section down";
-
-  upBtn.addEventListener("click", () => {
+  const arrows = el("div", "admin-arrow-group");
+  const up = el("button", "btn-arrow", "▲");
+  const down = el("button", "btn-arrow", "▼");
+  up.onclick = () => {
     moveUp(currentMaster.sections, sectionIndex);
     renderAdminUI();
-  });
-
-  downBtn.addEventListener("click", () => {
+  };
+  down.onclick = () => {
     moveDown(currentMaster.sections, sectionIndex);
     renderAdminUI();
-  });
+  };
 
-  arrowGroup.appendChild(upBtn);
-  arrowGroup.appendChild(downBtn);
+  arrows.append(up, down);
 
-  const deleteBtn = el("button", "btn-delete", "✕");
-  deleteBtn.title = "Delete section";
-  deleteBtn.addEventListener("click", () => {
-    deleteSection(sectionIndex);
-  });
+  const del = el("button", "btn-delete", "✕");
+  del.onclick = () => deleteSection(sectionIndex);
 
-  actions.appendChild(arrowGroup);
-  actions.appendChild(deleteBtn);
+  actions.append(arrows, del);
 
-  header.appendChild(titleWrap);
-  header.appendChild(actions);
-
-  card.appendChild(header);
+  header.append(titleWrap, actions);
+  card.append(header);
 
   // Subsections
-  const subsContainer = el("div", "admin-subsections");
+  const subs = el("div", "admin-subsections");
   (section.subsections || [])
     .sort((a, b) => (a.order || 0) - (b.order || 0))
-    .forEach((sub, subIndex) => {
-      subsContainer.appendChild(renderAdminSubsection(section, sub, subIndex));
-    });
-  card.appendChild(subsContainer);
+    .forEach((sub, i) => subs.append(renderSubsection(section, sub, i)));
+  card.append(subs);
 
-  const addSubBtn = el("button", "btn-small-outline", "＋ Add Subsection");
-  addSubBtn.addEventListener("click", () => {
-    addSubsection(section);
-  });
-  card.appendChild(addSubBtn);
+  const addSub = el("button", "btn-small-outline", "＋ Add Subsection");
+  addSub.onclick = () => addSubsection(section);
+  card.append(addSub);
 
   return card;
 }
 
-function renderAdminSubsection(section, subsection, subIndex) {
+// ----------------------------------------------------
+// Render Subsection
+// ----------------------------------------------------
+
+function renderSubsection(section, subsection, subIndex) {
   const block = el("div", "admin-subsection");
 
   const header = el("div", "admin-subsection-header");
@@ -225,189 +206,152 @@ function renderAdminSubsection(section, subsection, subIndex) {
   const titleInput = el("input", "admin-subsection-title-input");
   titleInput.value = subsection.title || "";
   titleInput.placeholder = "Subsection title";
-
-  titleInput.addEventListener("input", () => {
+  titleInput.oninput = () => {
     subsection.title = titleInput.value;
     saveMasterDraft();
-  });
+  };
 
   const titleWrap = el("div", "admin-subsection-title-wrap");
-  titleWrap.appendChild(titleInput);
+  titleWrap.append(titleInput);
 
-  // Right side: arrows + delete
   const actions = el("div", "admin-header-actions");
 
-  const arrowGroup = el("div", "admin-arrow-group");
-  const upBtn = el("button", "btn-arrow", "▲");
-  const downBtn = el("button", "btn-arrow", "▼");
+  const arrows = el("div", "admin-arrow-group");
+  const up = el("button", "btn-arrow", "▲");
+  const down = el("button", "btn-arrow", "▼");
 
-  upBtn.title = "Move subsection up";
-  downBtn.title = "Move subsection down";
-
-  upBtn.addEventListener("click", () => {
-    section.subsections = section.subsections || [];
+  up.onclick = () => {
     moveUp(section.subsections, subIndex);
     renderAdminUI();
-  });
-
-  downBtn.addEventListener("click", () => {
-    section.subsections = section.subsections || [];
+  };
+  down.onclick = () => {
     moveDown(section.subsections, subIndex);
     renderAdminUI();
-  });
+  };
 
-  arrowGroup.appendChild(upBtn);
-  arrowGroup.appendChild(downBtn);
+  arrows.append(up, down);
 
-  const deleteBtn = el("button", "btn-delete", "✕");
-  deleteBtn.title = "Delete subsection";
-  deleteBtn.addEventListener("click", () => {
-    deleteSubsection(section, subIndex);
-  });
+  const del = el("button", "btn-delete", "✕");
+  del.onclick = () => deleteSubsection(section, subIndex);
 
-  actions.appendChild(arrowGroup);
-  actions.appendChild(deleteBtn);
+  actions.append(arrows, del);
 
-  header.appendChild(titleWrap);
-  header.appendChild(actions);
+  header.append(titleWrap, actions);
+  block.append(header);
 
-  block.appendChild(header);
-
-  // Tasks list
-  const tasksContainer = el("div", "admin-tasks");
+  // Tasks
+  const tasks = el("div", "admin-tasks");
   (subsection.tasks || [])
     .sort((a, b) => (a.order || 0) - (b.order || 0))
-    .forEach((task, tIndex) => {
-      tasksContainer.appendChild(renderAdminTask(subsection, task, tIndex));
-    });
+    .forEach((task, i) => tasks.append(renderTask(subsection, task, i)));
 
-  block.appendChild(tasksContainer);
+  block.append(tasks);
 
   const addTaskBtn = el("button", "btn-small-outline", "＋ Add Task");
-  addTaskBtn.addEventListener("click", () => {
-    addTask(subsection);
-  });
-  block.appendChild(addTaskBtn);
+  addTaskBtn.onclick = () => addTask(subsection);
+  block.append(addTaskBtn);
 
   return block;
 }
 
-function renderAdminTask(subsection, task, taskIndex) {
-  const wrapper = el("div", "admin-task");
+// ----------------------------------------------------
+// Render Task
+// ----------------------------------------------------
 
-  // Header row: label + arrows + delete
+function renderTask(subsection, task, taskIndex) {
+  const block = el("div", "admin-task");
+
   const topRow = el("div", "admin-task-toprow");
-
-  const label = el("span", "admin-task-label");
-  label.textContent = "Task";
+  const label = el("span", "admin-task-label", "Task");
 
   const actions = el("div", "admin-header-actions");
 
-  const arrowGroup = el("div", "admin-arrow-group");
-  const upBtn = el("button", "btn-arrow", "▲");
-  const downBtn = el("button", "btn-arrow", "▼");
+  const arrows = el("div", "admin-arrow-group");
+  const up = el("button", "btn-arrow", "▲");
+  const down = el("button", "btn-arrow", "▼");
 
-  upBtn.title = "Move task up";
-  downBtn.title = "Move task down";
-
-  upBtn.addEventListener("click", () => {
-    subsection.tasks = subsection.tasks || [];
+  up.onclick = () => {
     moveUp(subsection.tasks, taskIndex);
     renderAdminUI();
-  });
-
-  downBtn.addEventListener("click", () => {
-    subsection.tasks = subsection.tasks || [];
+  };
+  down.onclick = () => {
     moveDown(subsection.tasks, taskIndex);
     renderAdminUI();
-  });
+  };
 
-  arrowGroup.appendChild(upBtn);
-  arrowGroup.appendChild(downBtn);
+  arrows.append(up, down);
 
-  const deleteBtn = el("button", "btn-delete", "✕");
-  deleteBtn.title = "Delete task";
-  deleteBtn.addEventListener("click", () => {
-    deleteTask(subsection, taskIndex);
-  });
+  const del = el("button", "btn-delete", "✕");
+  del.onclick = () => deleteTask(subsection, taskIndex);
 
-  actions.appendChild(arrowGroup);
-  actions.appendChild(deleteBtn);
+  actions.append(arrows, del);
+  topRow.append(label, actions);
 
-  topRow.appendChild(label);
-  topRow.appendChild(actions);
-
-  // Task description textarea
+  // Description
   const textarea = el("textarea", "admin-task-textarea");
   textarea.value = task.text || "";
-  textarea.placeholder = "Task description (can be multi-line)";
-  textarea.addEventListener("input", () => {
+  textarea.placeholder = "Task description";
+  textarea.oninput = () => {
     task.text = textarea.value;
     saveMasterDraft();
-  });
+  };
 
-  // Master note
-  const noteLabel = el("label", "admin-task-label");
-  noteLabel.textContent = "Master note (optional guidance / URL)";
-
+  // Note
+  const noteLabel = el("label", "admin-task-label", "Master note (optional)");
   const noteArea = el("textarea", "admin-task-textarea admin-task-notearea");
   noteArea.value = task.note || "";
-  noteArea.placeholder = "Optional guidance, URL, or explanation for this task.";
-  noteArea.addEventListener("input", () => {
+  noteArea.placeholder = "Optional guidance, URL, or extra info";
+  noteArea.oninput = () => {
     task.note = noteArea.value;
     saveMasterDraft();
-  });
+  };
 
-  wrapper.appendChild(topRow);
-  wrapper.appendChild(textarea);
-  wrapper.appendChild(noteLabel);
-  wrapper.appendChild(noteArea);
+  block.append(topRow, textarea, noteLabel, noteArea);
 
-  return wrapper;
+  return block;
 }
 
-// ---------- Add section / subsection / task ----------
+// ----------------------------------------------------
+// Add items
+// ----------------------------------------------------
 
 function addSection() {
-  const newSection = {
+  currentMaster.sections.push({
     id: makeId("sec"),
     title: "New Section",
-    order: (currentMaster.sections?.length || 0) + 1,
+    order: currentMaster.sections.length + 1,
     subsections: []
-  };
-  currentMaster.sections = currentMaster.sections || [];
-  currentMaster.sections.push(newSection);
+  });
   saveMasterDraft();
   renderAdminUI();
 }
 
 function addSubsection(section) {
-  section.subsections = section.subsections || [];
-  const newSub = {
+  section.subsections.push({
     id: makeId("sub"),
     title: "New Subsection",
-    order: section.subsections.length + 1,
+    order: (section.subsections.length || 0) + 1,
     tasks: []
-  };
-  section.subsections.push(newSub);
+  });
   saveMasterDraft();
   renderAdminUI();
 }
 
 function addTask(subsection) {
-  subsection.tasks = subsection.tasks || [];
-  const newTask = {
+  subsection.tasks.push({
     id: makeId("task"),
-    order: subsection.tasks.length + 1,
+    title: "New Task",
+    order: (subsection.tasks.length || 0) + 1,
     text: "New task",
     note: ""
-  };
-  subsection.tasks.push(newTask);
+  });
   saveMasterDraft();
   renderAdminUI();
 }
 
-// ---------- Export modal ----------
+// ----------------------------------------------------
+// Export Modal
+// ----------------------------------------------------
 
 function showExportModal() {
   const json = JSON.stringify(currentMaster, null, 2);
@@ -415,31 +359,18 @@ function showExportModal() {
   const overlay = el("div", "admin-modal-backdrop");
   const modal = el("div", "admin-modal");
 
-  const title = el("h2", "");
-  title.textContent = "Export Master Template JSON";
-
-  const info = el("p", "");
-  info.innerHTML = `
-    Copy this JSON and paste it into <code>master-template.js</code>
-    (replacing the existing <code>window.MASTER_CHECKLIST</code> object),
-    then commit to GitHub to publish the updated template.
+  modal.innerHTML = `
+    <h2>Export Master Template JSON</h2>
+    <p>Copy into <code>master-template.js</code> to publish.</p>
   `;
 
   const textarea = el("textarea", "admin-modal-textarea");
   textarea.value = json;
 
-  const closeBtn = el("button", "btn-primary");
-  closeBtn.textContent = "Close";
-  closeBtn.addEventListener("click", () => {
-    document.body.removeChild(overlay);
-  });
+  const close = el("button", "btn-primary", "Close");
+  close.onclick = () => document.body.removeChild(overlay);
 
-  modal.appendChild(title);
-  modal.appendChild(info);
-  modal.appendChild(textarea);
-  modal.appendChild(closeBtn);
-  overlay.appendChild(modal);
-
-  document.body.appendChild(overlay);
+  modal.append(textarea, close);
+  overlay.append(modal);
+  document.body.append(overlay);
 }
-
