@@ -529,6 +529,7 @@ function renderTask(subsection, task, taskIndex) {
     task.text = textArea.value;
     saveMasterDraft();
   });
+  autoResizeTextArea(textArea);
 
   // Optional note / guidance
   const noteLabel = el("label", "admin-task-label", "Master note (optional guidance / URL)");
@@ -539,6 +540,7 @@ function renderTask(subsection, task, taskIndex) {
     task.note = noteArea.value;
     saveMasterDraft();
   });
+  autoResizeTextArea(noteArea);
 
   wrapper.appendChild(topRow);
   wrapper.appendChild(textArea);
@@ -653,5 +655,6 @@ function showExportModal() {
 
   document.body.appendChild(overlay);
 }
+
 
 
