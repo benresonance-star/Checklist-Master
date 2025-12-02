@@ -188,6 +188,24 @@ function focusAndScroll(selector) {
 }
 
 // ----------------------------------------------------
+// Auto-resize textareas so full content is visible
+// ----------------------------------------------------
+function autoResizeTextArea(textarea) {
+  if (!textarea) return;
+
+  const resize = () => {
+    textarea.style.height = "auto";
+    textarea.style.height = textarea.scrollHeight + "px";
+  };
+
+  // Initial sizing
+  resize();
+
+  textarea.addEventListener("input", resize);
+}
+
+
+// ----------------------------------------------------
 // Main Render
 // ----------------------------------------------------
 
@@ -635,4 +653,5 @@ function showExportModal() {
 
   document.body.appendChild(overlay);
 }
+
 
