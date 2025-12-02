@@ -243,3 +243,23 @@ body {
 .btn-arrow:hover {
   background: #e5e7eb;
 }
+
+.admin-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-delete {
+  border-radius: 999px;
+  border: 1px solid #fecaca;
+  background: #fee2e2;
+  color: #b91c1c;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.btn-delete:hover {
+  background: #fecaca;
+}
