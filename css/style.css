@@ -62,6 +62,42 @@ body {
   gap: 10px;
 }
 
+/* Align left side (toggle + title) nicely */
+.admin-section-left,
+.admin-subsection-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+/* Make the toggle a bit smaller */
+.btn-toggle {
+  width: 24px;
+  height: 24px;
+  font-size: 0.8rem;
+}
+
+/* Give subsection body a bit more breathing room */
+.admin-section-body {
+  padding: 8px 10px 10px;
+}
+
+.admin-subsection {
+  padding: 10px 10px 12px;
+  margin-bottom: 10px;
+}
+
+/* Tasks inside subsection – no visual overlap */
+.admin-tasks {
+  margin-top: 4px;
+}
+
+.admin-task {
+  margin-bottom: 6px;
+}
+
+
 /* Buttons */
 
 .btn-primary {
@@ -291,3 +327,4 @@ body {
   font-size: 0.9rem;
   padding: 10px;
 }
+
