@@ -44,4 +44,169 @@ body {
   margin-top: 4px;
 }
 
+/* -------- Admin mode styles -------- */
+
+.admin-header h1 {
+  margin-top: 0;
+  margin-bottom: 4px;
+}
+
+.admin-header-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.btn-primary,
+.btn-primary-outline,
+.btn-secondary,
+.btn-small-outline {
+  font-size: 0.9rem;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: #2563eb;
+  color: #fff;
+}
+
+.btn-primary-outline {
+  background: #fff;
+  color: #2563eb;
+  border-color: #bfdbfe;
+}
+
+.btn-secondary {
+  background: #f3f4f6;
+  color: #111827;
+  border-color: #e5e7eb;
+}
+
+.btn-small-outline {
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  background: #fff;
+  color: #4b5563;
+  border-color: #d1d5db;
+}
+
+.btn-primary:hover,
+.btn-primary-outline:hover,
+.btn-secondary:hover,
+.btn-small-outline:hover {
+  filter: brightness(0.97);
+}
+
+.full-width {
+  width: 100%;
+}
+
+.admin-section-card {
+  margin-top: 12px;
+}
+
+.admin-section-header {
+  margin-bottom: 8px;
+}
+
+.admin-section-title-input,
+.admin-subsection-title-input {
+  width: 100%;
+  font-size: 1rem;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.admin-section-title-input:focus,
+.admin-subsection-title-input:focus,
+.admin-task-textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px #dbeafe;
+}
+
+.admin-subsection {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  background: #f9fafb;
+}
+
+.admin-subsection-header {
+  margin-bottom: 8px;
+}
+
+.admin-tasks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.admin-task {
+  padding: 8px;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+}
+
+.admin-task-label {
+  display: block;
+  font-size: 0.8rem;
+  margin-bottom: 4px;
+  color: #4b5563;
+}
+
+.admin-task-textarea {
+  width: 100%;
+  min-height: 48px;
+  font-size: 0.85rem;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  resize: vertical;
+  margin-bottom: 6px;
+}
+
+.admin-task-notearea {
+  min-height: 40px;
+}
+
+/* Export modal */
+
+.admin-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.admin-modal {
+  background: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.3);
+  max-width: 720px;
+  width: 92%;
+}
+
+.admin-modal-textarea {
+  width: 100%;
+  min-height: 220px;
+  margin: 8px 0 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  padding: 8px;
+  resize: vertical;
+}
 
