@@ -1,6 +1,5 @@
 /* ============================================================
-   GLOBAL: Material You + Compact-B
-   Tones: Neutral surface + tinted section headers
+   GLOBAL: Material You + Compact-B (grey–blue)
    ============================================================ */
 
 :root {
@@ -8,74 +7,68 @@
   --surface-variant: #f3f4f6;
   --on-surface: #1f1f1f;
   --outline: #d0d2d5;
-  --outline-variant: #e7e8ea;
+  --outline-variant: #e4e6ea;
 
-  /* Accent tones for section headers */
-  --accent1: #f7e5ff;
-  --accent1-border: #e2c6ff;
-  --accent2: #e7f3ff;
-  --accent2-border: #cfe5ff;
-  --accent3: #eaf7ed;
-  --accent3-border: #cce8d3;
+  /* Section header tint – soft grey-blue */
+  --accent-section-bg: #eef3ff;
+  --accent-section-border: #d7e1ff;
 
   --radius-card: 16px;
   --radius-sm: 10px;
   --radius-xs: 6px;
 
-  --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
-  --shadow-hover: 0 3px 12px rgba(0,0,0,0.10);
+  --shadow-card: 0 2px 6px rgba(0,0,0,0.05);
+  --shadow-hover: 0 3px 10px rgba(0,0,0,0.08);
 
-  --transition-fast: 0.2s ease;
+  --transition-fast: 0.18s ease;
 }
-
-/* ============================================================
-   LAYOUT BASICS
-   ============================================================ */
 
 body {
   margin: 0;
   padding: 0;
   font-family: "Inter", system-ui, -apple-system, sans-serif;
-  background: #fafafa;
+  background: #f5f5f7;
   color: var(--on-surface);
 }
+
+/* ============================================================
+   CARDS & HEADER
+   ============================================================ */
 
 .card {
   background: var(--surface);
   border-radius: var(--radius-card);
-  padding: 18px 20px;
-  margin: 12px 0;
+  padding: 14px 16px;
+  margin: 10px 0;
   border: 1px solid var(--outline-variant);
   box-shadow: var(--shadow-card);
 }
 
-/* ============================================================
-   ADMIN HEADER
-   ============================================================ */
-
 .admin-header h1 {
   margin: 0;
-  font-size: 1.9rem;
+  font-size: 1.8rem;
   font-weight: 700;
 }
 
 .admin-header p {
-  margin: 6px 0 20px;
+  margin: 4px 0 16px;
   color: #5f6368;
+  font-size: 0.9rem;
 }
 
 .admin-header-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 10px;
 }
 
 /* Buttons */
+
 .btn-primary {
   background: #1a73e8;
   color: #ffffff;
   border: none;
-  padding: 10px 18px;
+  padding: 9px 16px;
   border-radius: var(--radius-sm);
   font-size: 0.9rem;
   font-weight: 500;
@@ -90,8 +83,9 @@ body {
   background: var(--surface-variant);
   border: 1px solid var(--outline);
   color: #333;
-  padding: 10px 18px;
+  padding: 9px 16px;
   border-radius: var(--radius-sm);
+  font-size: 0.88rem;
   cursor: pointer;
 }
 
@@ -99,22 +93,23 @@ body {
   background: transparent;
   border: 1px solid #1a73e8;
   color: #1a73e8;
-  padding: 9px 16px;
+  padding: 8px 14px;
   border-radius: var(--radius-sm);
+  font-size: 0.88rem;
 }
 
 .btn-small-outline {
   background: transparent;
-  padding: 6px 12px;
+  padding: 5px 10px;
   border-radius: var(--radius-xs);
   border: 1px solid #1a73e8;
   color: #1a73e8;
-  margin-top: 6px;
-  font-size: 0.85rem;
+  margin-top: 4px;
+  font-size: 0.84rem;
 }
 
 /* ============================================================
-   SECTION HEADER (COLOR ACCENTED)
+   SECTION HEADER (grey–blue accent)
    ============================================================ */
 
 .admin-section-card {
@@ -122,11 +117,11 @@ body {
 }
 
 .admin-section-header {
-  background: var(--accent1);
-  border-bottom: 1px solid var(--accent1-border);
+  background: var(--accent-section-bg);
+  border-bottom: 1px solid var(--accent-section-border);
   border-radius: var(--radius-card) var(--radius-card) 0 0;
-  padding: 14px 16px;
-  margin-bottom: 10px;
+  padding: 10px 12px;
+  margin: 0 0 8px 0;
 
   display: flex;
   justify-content: space-between;
@@ -137,7 +132,7 @@ body {
   width: 100%;
   border: none;
   background: transparent;
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   font-weight: 600;
   color: var(--on-surface);
 }
@@ -145,21 +140,28 @@ body {
   outline: none;
 }
 
-/* ============================================================
-   ARROWS + DELETE BUTTON (iPhone-friendly)
-   ============================================================ */
-
-.admin-arrow-group {
+/* align arrows + delete on one line */
+.admin-header-actions {
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
+/* ============================================================
+   ARROWS + DELETE (smaller, tighter)
+   ============================================================ */
+
+.admin-arrow-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .btn-arrow,
 .btn-delete {
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
 
   border: 1px solid var(--outline);
   background: var(--surface);
@@ -167,7 +169,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.9rem;
+  font-size: 0.78rem;
 
   cursor: pointer;
   transition: var(--transition-fast);
@@ -175,13 +177,13 @@ body {
 
 .btn-arrow:hover,
 .btn-delete:hover {
-  background: #f0f0f0;
+  background: #eef0f3;
   box-shadow: var(--shadow-hover);
 }
 
 .btn-delete {
   color: #d93025;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 /* ============================================================
@@ -192,22 +194,22 @@ body {
   background: var(--surface-variant);
   border-radius: var(--radius-sm);
   border: 1px solid var(--outline-variant);
-  padding: 12px;
-  margin-bottom: 12px;
+  padding: 10px;
+  margin-bottom: 8px;
 }
 
 .admin-subsection-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .admin-subsection-title-input {
   width: 100%;
   border: none;
   background: transparent;
-  font-size: 1rem;
+  font-size: 0.98rem;
   font-weight: 500;
 }
 .admin-subsection-title-input:focus {
@@ -215,40 +217,41 @@ body {
 }
 
 /* ============================================================
-   TASKS
+   TASKS (compact)
    ============================================================ */
 
 .admin-task {
   background: var(--surface);
   border: 1px solid var(--outline-variant);
   border-radius: var(--radius-xs);
-  padding: 10px 12px;
-  margin-bottom: 10px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
 }
 
 .admin-task-toprow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .admin-task-label {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: #6e6e6e;
 }
 
-/* Compact textareas */
+/* compact textareas */
+
 .admin-task-textarea,
 .admin-task-notearea {
   width: 100%;
   border-radius: var(--radius-xs);
   border: 1px solid var(--outline);
-  padding: 8px 10px;
-  font-size: 0.92rem;
+  padding: 6px 8px;
+  font-size: 0.9rem;
   resize: vertical;
-  min-height: 38px;
-  line-height: 1.3;
+  min-height: 32px;
+  line-height: 1.25;
   background: #fcfcfc;
 }
 
@@ -258,11 +261,11 @@ body {
 }
 
 .admin-task-notearea {
-  margin-top: 4px;
+  margin-top: 3px;
 }
 
 /* ============================================================
-   EXPORT MODAL
+   EXPORT MODAL (unchanged except slightly tighter)
    ============================================================ */
 
 .admin-modal-backdrop {
@@ -274,17 +277,17 @@ body {
 .admin-modal {
   background: var(--surface);
   max-width: 540px;
-  margin: 10vh auto;
-  padding: 24px;
+  margin: 8vh auto;
+  padding: 20px;
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
 }
 
 .admin-modal-textarea {
   width: 100%;
-  min-height: 320px;
+  min-height: 300px;
   border: 1px solid var(--outline);
   border-radius: var(--radius-sm);
   font-size: 0.9rem;
-  padding: 12px;
+  padding: 10px;
 }
