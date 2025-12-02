@@ -23,3 +23,4 @@ function mergeMasterWithInstance(master, instance) {
 
   return merged;
 }
+
