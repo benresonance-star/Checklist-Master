@@ -2,11 +2,6 @@
 // Admin Mode UI - edit master template in the browser
 // ----------------------------------------------------
 // v0: local only (no Supabase yet)
-// - Loads MASTER_CHECKLIST as a starting point
-// - Keeps a "draft" in localStorage so you don't lose work
-// - Lets you edit titles, task text, master notes
-// - Lets you add sections, subsections, and tasks
-// - Lets you export JSON to paste back into master-template.js
 // ----------------------------------------------------
 
 const MASTER_DRAFT_KEY = "masterChecklistDraftV1";
@@ -283,3 +278,4 @@ function showExportModal() {
 
   document.body.appendChild(overlay);
 }
+
