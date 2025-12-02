@@ -1,15 +1,17 @@
 // ----------------------------------------------------
 // Admin Mode UI - edit master template in the browser
 // ----------------------------------------------------
-// v0: local only (no Supabase yet)
+// v0.2: local-only admin, with simple ▲ / ▼ reordering
 // ----------------------------------------------------
 
 const MASTER_DRAFT_KEY = "masterChecklistDraftV1";
 
 let currentMaster = null;
 
+// ---------- Init & draft handling ----------
+
 function initAdminUI() {
-  // For now we skip auth: this is just a local admin tool
+  // No auth yet – just a local admin tool
   loadMasterDraft();
   renderAdminUI();
 }
@@ -47,6 +49,29 @@ function resetMasterDraftToOriginal() {
   renderAdminUI();
 }
 
+// ---------- Reorder helpers (simple ▲ / ▼) ----------
+
+function moveUp(list, index) {
+  if (index <= 0) return;
+  [list[index - 1], list[index]] = [list[index], list[index - 1]];
+  renumber(list);
+}
+
+function moveDown(list, index) {
+  if (index >= list.length - 1) return;
+  [list[index + 1], list[index]] = [list[index], list[index + 1]];
+  renumber(list);
+}
+
+function renumber(list) {
+  list.forEach((item, i) => {
+    item.order = i + 1;
+  });
+  saveMasterDraft();
+}
+
+// ---------- Main render ----------
+
 function renderAdminUI() {
   const app = qs("#app");
   app.innerHTML = "";
@@ -79,9 +104,9 @@ function renderAdminUI() {
 
   // --- Sections ---
   currentMaster.sections
-    .sort((a, b) => a.order - b.order)
-    .forEach((section) => {
-      app.appendChild(renderAdminSection(section));
+    .sort((a, b) => (a.order || 0) - (b.order || 0))
+    .forEach((section, sIndex) => {
+      app.appendChild(renderAdminSection(section, sIndex));
     });
 
   // Add-section button at bottom too
@@ -94,12 +119,14 @@ function renderAdminUI() {
   app.appendChild(addSectionWrapper);
 }
 
-// ---------------- Section / Subsection / Task rendering ----------------
+// ---------- Section / Subsection / Task rendering ----------
 
-function renderAdminSection(section) {
+function renderAdminSection(section, sectionIndex) {
   const card = el("div", "card admin-section-card");
 
-  // Section title input
+  const header = el("div", "admin-section-header");
+
+  // Left: title
   const titleInput = el("input", "admin-section-title-input");
   titleInput.value = section.title || "";
   titleInput.placeholder = "Section title";
@@ -109,18 +136,41 @@ function renderAdminSection(section) {
     saveMasterDraft();
   });
 
-  const sectionHeader = el("div", "admin-section-header");
-  sectionHeader.appendChild(titleInput);
+  const titleWrap = el("div", "admin-section-title-wrap");
+  titleWrap.appendChild(titleInput);
 
-  // (Future: section-level actions like delete, move up/down)
-  card.appendChild(sectionHeader);
+  // Right: ▲ / ▼ arrows
+  const arrowGroup = el("div", "admin-arrow-group");
+  const upBtn = el("button", "btn-arrow", "▲");
+  const downBtn = el("button", "btn-arrow", "▼");
+
+  upBtn.title = "Move section up";
+  downBtn.title = "Move section down";
+
+  upBtn.addEventListener("click", () => {
+    moveUp(currentMaster.sections, sectionIndex);
+    renderAdminUI();
+  });
+
+  downBtn.addEventListener("click", () => {
+    moveDown(currentMaster.sections, sectionIndex);
+    renderAdminUI();
+  });
+
+  arrowGroup.appendChild(upBtn);
+  arrowGroup.appendChild(downBtn);
+
+  header.appendChild(titleWrap);
+  header.appendChild(arrowGroup);
+
+  card.appendChild(header);
 
   // Subsections
   const subsContainer = el("div", "admin-subsections");
-  section.subsections
-    .sort((a, b) => a.order - b.order)
-    .forEach((sub) => {
-      subsContainer.appendChild(renderAdminSubsection(section, sub));
+  (section.subsections || [])
+    .sort((a, b) => (a.order || 0) - (b.order || 0))
+    .forEach((sub, subIndex) => {
+      subsContainer.appendChild(renderAdminSubsection(section, sub, subIndex));
     });
   card.appendChild(subsContainer);
 
@@ -133,10 +183,11 @@ function renderAdminSection(section) {
   return card;
 }
 
-function renderAdminSubsection(section, subsection) {
+function renderAdminSubsection(section, subsection, subIndex) {
   const block = el("div", "admin-subsection");
 
   const header = el("div", "admin-subsection-header");
+
   const titleInput = el("input", "admin-subsection-title-input");
   titleInput.value = subsection.title || "";
   titleInput.placeholder = "Subsection title";
@@ -146,15 +197,42 @@ function renderAdminSubsection(section, subsection) {
     saveMasterDraft();
   });
 
-  header.appendChild(titleInput);
+  const titleWrap = el("div", "admin-subsection-title-wrap");
+  titleWrap.appendChild(titleInput);
+
+  const arrowGroup = el("div", "admin-arrow-group");
+  const upBtn = el("button", "btn-arrow", "▲");
+  const downBtn = el("button", "btn-arrow", "▼");
+
+  upBtn.title = "Move subsection up";
+  downBtn.title = "Move subsection down";
+
+  upBtn.addEventListener("click", () => {
+    section.subsections = section.subsections || [];
+    moveUp(section.subsections, subIndex);
+    renderAdminUI();
+  });
+
+  downBtn.addEventListener("click", () => {
+    section.subsections = section.subsections || [];
+    moveDown(section.subsections, subIndex);
+    renderAdminUI();
+  });
+
+  arrowGroup.appendChild(upBtn);
+  arrowGroup.appendChild(downBtn);
+
+  header.appendChild(titleWrap);
+  header.appendChild(arrowGroup);
+
   block.appendChild(header);
 
   // Tasks list
   const tasksContainer = el("div", "admin-tasks");
-  subsection.tasks
-    .sort((a, b) => a.order - b.order)
-    .forEach((task) => {
-      tasksContainer.appendChild(renderAdminTask(subsection, task));
+  (subsection.tasks || [])
+    .sort((a, b) => (a.order || 0) - (b.order || 0))
+    .forEach((task, tIndex) => {
+      tasksContainer.appendChild(renderAdminTask(subsection, task, tIndex));
     });
 
   block.appendChild(tasksContainer);
@@ -168,13 +246,41 @@ function renderAdminSubsection(section, subsection) {
   return block;
 }
 
-function renderAdminTask(subsection, task) {
+function renderAdminTask(subsection, task, taskIndex) {
   const wrapper = el("div", "admin-task");
 
-  // Task description
-  const label = el("label", "admin-task-label");
-  label.textContent = "Task description";
+  // Header with arrows
+  const topRow = el("div", "admin-task-toprow");
 
+  const label = el("span", "admin-task-label");
+  label.textContent = "Task";
+
+  const arrowGroup = el("div", "admin-arrow-group");
+  const upBtn = el("button", "btn-arrow", "▲");
+  const downBtn = el("button", "btn-arrow", "▼");
+
+  upBtn.title = "Move task up";
+  downBtn.title = "Move task down";
+
+  upBtn.addEventListener("click", () => {
+    subsection.tasks = subsection.tasks || [];
+    moveUp(subsection.tasks, taskIndex);
+    renderAdminUI();
+  });
+
+  downBtn.addEventListener("click", () => {
+    subsection.tasks = subsection.tasks || [];
+    moveDown(subsection.tasks, taskIndex);
+    renderAdminUI();
+  });
+
+  arrowGroup.appendChild(upBtn);
+  arrowGroup.appendChild(downBtn);
+
+  topRow.appendChild(label);
+  topRow.appendChild(arrowGroup);
+
+  // Task description textarea
   const textarea = el("textarea", "admin-task-textarea");
   textarea.value = task.text || "";
   textarea.placeholder = "Task description (can be multi-line)";
@@ -195,7 +301,7 @@ function renderAdminTask(subsection, task) {
     saveMasterDraft();
   });
 
-  wrapper.appendChild(label);
+  wrapper.appendChild(topRow);
   wrapper.appendChild(textarea);
   wrapper.appendChild(noteLabel);
   wrapper.appendChild(noteArea);
@@ -203,47 +309,48 @@ function renderAdminTask(subsection, task) {
   return wrapper;
 }
 
-// ---------------- Add section / subsection / task ----------------
+// ---------- Add section / subsection / task ----------
 
 function addSection() {
   const newSection = {
     id: makeId("sec"),
     title: "New Section",
-    order: currentMaster.sections.length + 1,
+    order: (currentMaster.sections?.length || 0) + 1,
     subsections: []
   };
+  currentMaster.sections = currentMaster.sections || [];
   currentMaster.sections.push(newSection);
   saveMasterDraft();
   renderAdminUI();
 }
 
 function addSubsection(section) {
+  section.subsections = section.subsections || [];
   const newSub = {
     id: makeId("sub"),
     title: "New Subsection",
-    order: (section.subsections?.length || 0) + 1,
+    order: section.subsections.length + 1,
     tasks: []
   };
-  section.subsections = section.subsections || [];
   section.subsections.push(newSub);
   saveMasterDraft();
   renderAdminUI();
 }
 
 function addTask(subsection) {
+  subsection.tasks = subsection.tasks || [];
   const newTask = {
     id: makeId("task"),
-    order: (subsection.tasks?.length || 0) + 1,
+    order: subsection.tasks.length + 1,
     text: "New task",
     note: ""
   };
-  subsection.tasks = subsection.tasks || [];
   subsection.tasks.push(newTask);
   saveMasterDraft();
   renderAdminUI();
 }
 
-// ---------------- Export modal ----------------
+// ---------- Export modal ----------
 
 function showExportModal() {
   const json = JSON.stringify(currentMaster, null, 2);
@@ -278,5 +385,3 @@ function showExportModal() {
 
   document.body.appendChild(overlay);
 }
-
-
