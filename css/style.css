@@ -1,6 +1,6 @@
 /* ============================================================
-   CHECKLIST APP – GLOBAL STYLE
-   Compact Google-ish UI, grey–blue palette
+   CHECKLIST APP – GLOBAL STYLE (v2)
+   Compact Google-like UI, grey–blue palette
    ============================================================ */
 
 /* ---------- Color + radius tokens ---------- */
@@ -123,7 +123,7 @@ button {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Primary action (e.g. Export JSON, New instance) */
+/* Primary action (Export JSON, etc.) */
 
 .btn-primary {
   background: var(--accent);
@@ -154,7 +154,7 @@ button {
   color: var(--text-main);
 }
 
-/* Outline primary */
+/* Outline variants */
 
 .btn-primary-outline {
   background: transparent;
@@ -178,30 +178,27 @@ button {
   width: 100%;
 }
 
-/* Small icon buttons: arrows, duplicate, delete, toggles */
+/* Icon buttons: arrows, duplicate, delete (small and quiet) */
 
 .btn-arrow,
-.btn-delete,
-.btn-toggle {
-  width: 26px;
-  height: 26px;
+.btn-delete {
+  width: 24px;
+  height: 24px;
   border-radius: var(--radius-xs);
   border: 1px solid var(--border-subtle);
   background: var(--surface);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   cursor: pointer;
-  transition: background var(--transition-fast), box-shadow var(--transition-fast),
-    transform var(--transition-fast);
+  transition: background var(--transition-fast), transform var(--transition-fast);
+  box-shadow: none;
 }
 
 .btn-arrow:hover,
-.btn-delete:hover,
-.btn-toggle:hover {
+.btn-delete:hover {
   background: #eef0f3;
-  box-shadow: var(--shadow-hover);
   transform: translateY(-1px);
 }
 
@@ -210,19 +207,33 @@ button {
   border-color: #f3b5b5;
 }
 
-/* Chevron toggle slightly smaller */
+/* Chevron toggle – ghost-style so it reads as a handle, not an action */
 
 .btn-toggle {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: var(--text-subtle);
 }
 
-/* Utility layout for right-side actions */
+.btn-toggle:hover {
+  background: rgba(15, 23, 42, 0.04);
+  transform: none;
+}
+
+/* Right-side control strip */
 
 .admin-header-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
+  margin-right: 2px;
 }
 
 .admin-arrow-group {
@@ -232,7 +243,7 @@ button {
 }
 
 /* ============================================================
-   RUNNER MODE (project instances)
+   RUNNER MODE (project checklist instances)
    ============================================================ */
 
 /* Top card */
@@ -313,7 +324,7 @@ button {
   color: var(--text-muted);
 }
 
-/* Optional guidance/note (readonly in runner) */
+/* Optional guidance/note */
 
 .runner-task-note {
   font-size: 0.78rem;
@@ -321,7 +332,7 @@ button {
   margin-top: 2px;
 }
 
-/* Small pill status (e.g. “Local demo instance”) */
+/* Status pill */
 
 .pill {
   display: inline-flex;
@@ -483,7 +494,7 @@ button {
   border-radius: var(--radius-md);
   border: 1px solid var(--border-soft);
   padding: 8px 10px;
-  margin: 6px 2px;
+  margin: 6px 4px; /* a bit more inset from right edge */
 }
 
 .admin-task-toprow {
@@ -493,12 +504,15 @@ button {
   margin-bottom: 4px;
 }
 
+/* Labels: lighter hierarchy */
+
 .admin-task-label {
-  font-size: 0.8rem;
-  color: var(--text-subtle);
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--text-muted);
 }
 
-/* Textareas */
+/* Textareas: fixed window + scrollbar when long */
 
 .admin-task-textarea,
 .admin-task-notearea {
@@ -508,9 +522,12 @@ button {
   border: 1px solid var(--border-subtle);
   padding: 6px 8px;
   font-size: 0.9rem;
-  resize: none; /* JS handles auto-resize */
   line-height: 1.25;
   background: #fcfcfc;
+  resize: none;          /* JS auto-resize, but we'll cap via max-height */
+  min-height: 44px;
+  max-height: 140px;     /* window height */
+  overflow-y: auto;      /* scroll when content exceeds */
 }
 
 .admin-task-textarea:focus,
@@ -520,12 +537,6 @@ button {
 }
 
 .admin-task-notearea {
-  margin-top: 3px;
-}
-
-/* Note label */
-
-.admin-task-label + .admin-task-notearea {
   margin-top: 4px;
 }
 
@@ -616,4 +627,3 @@ button {
     align-items: flex-start;
   }
 }
-
