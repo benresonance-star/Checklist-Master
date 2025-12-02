@@ -1,265 +1,290 @@
-/* Global resets, typography, colours */
+/* ============================================================
+   GLOBAL: Material You + Compact-B
+   Tones: Neutral surface + tinted section headers
+   ============================================================ */
+
+:root {
+  --surface: #ffffff;
+  --surface-variant: #f3f4f6;
+  --on-surface: #1f1f1f;
+  --outline: #d0d2d5;
+  --outline-variant: #e7e8ea;
+
+  /* Accent tones for section headers */
+  --accent1: #f7e5ff;
+  --accent1-border: #e2c6ff;
+  --accent2: #e7f3ff;
+  --accent2-border: #cfe5ff;
+  --accent3: #eaf7ed;
+  --accent3-border: #cce8d3;
+
+  --radius-card: 16px;
+  --radius-sm: 10px;
+  --radius-xs: 6px;
+
+  --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-hover: 0 3px 12px rgba(0,0,0,0.10);
+
+  --transition-fast: 0.2s ease;
+}
+
+/* ============================================================
+   LAYOUT BASICS
+   ============================================================ */
+
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, sans-serif;
-  background: #f4f4f5;
+  padding: 0;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  background: #fafafa;
+  color: var(--on-surface);
 }
 
-/* Shared card UI */
 .card {
-  background: #fff;
-  padding: 16px;
-  margin: 12px;
-  border-radius: 12px;
-  box-shadow: 0px 3px 8px rgba(0,0,0,0.08);
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  padding: 18px 20px;
+  margin: 12px 0;
+  border: 1px solid var(--outline-variant);
+  box-shadow: var(--shadow-card);
 }
 
-/* Task UI - using Style Option 2 (multi-line wrap + indent) */
-.task-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 4px 0;
-}
-
-.task-row input[type=checkbox] {
-  margin-top: 4px; /* aligns to top of first line of task text */
-}
-
-.task-text {
-  flex: 1;
-  white-space: normal;
-  line-height: 1.35;
-}
-
-.task-text.completed {
-  text-decoration: line-through;
-  color: #999;
-}
-
-/* Notes box */
-.task-note {
-  font-size: 0.85rem;
-  color: #6b7280;
-  margin-top: 4px;
-}
-
-/* -------- Admin mode styles -------- */
+/* ============================================================
+   ADMIN HEADER
+   ============================================================ */
 
 .admin-header h1 {
-  margin-top: 0;
-  margin-bottom: 4px;
+  margin: 0;
+  font-size: 1.9rem;
+  font-weight: 700;
+}
+
+.admin-header p {
+  margin: 6px 0 20px;
+  color: #5f6368;
 }
 
 .admin-header-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 12px;
+  gap: 12px;
 }
 
-.btn-primary,
-.btn-primary-outline,
-.btn-secondary,
-.btn-small-outline {
-  font-size: 0.9rem;
-  padding: 6px 12px;
-  border-radius: 999px;
-  border: 1px solid transparent;
-  cursor: pointer;
-}
-
+/* Buttons */
 .btn-primary {
-  background: #2563eb;
-  color: #fff;
+  background: #1a73e8;
+  color: #ffffff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-fast);
 }
-
-.btn-primary-outline {
-  background: #fff;
-  color: #2563eb;
-  border-color: #bfdbfe;
+.btn-primary:hover {
+  background: #1667cc;
 }
 
 .btn-secondary {
-  background: #f3f4f6;
-  color: #111827;
-  border-color: #e5e7eb;
-}
-
-.btn-small-outline {
-  font-size: 0.8rem;
-  padding: 4px 10px;
-  background: #fff;
-  color: #4b5563;
-  border-color: #d1d5db;
-}
-
-.btn-primary:hover,
-.btn-primary-outline:hover,
-.btn-secondary:hover,
-.btn-small-outline:hover {
-  filter: brightness(0.97);
-}
-
-.full-width {
-  width: 100%;
-}
-
-.admin-section-card {
-  margin-top: 12px;
-}
-
-.admin-section-header {
-  margin-bottom: 8px;
-}
-
-.admin-section-title-input,
-.admin-subsection-title-input {
-  width: 100%;
-  font-size: 1rem;
-  padding: 6px 8px;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-}
-
-.admin-section-title-input:focus,
-.admin-subsection-title-input:focus,
-.admin-task-textarea:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 1px #dbeafe;
-}
-
-.admin-subsection {
-  margin-top: 10px;
-  padding: 10px;
-  border-radius: 10px;
-  background: #f9fafb;
-}
-
-.admin-subsection-header {
-  margin-bottom: 8px;
-}
-
-.admin-tasks {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.admin-task {
-  padding: 8px;
-  border-radius: 8px;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-}
-
-.admin-task-label {
-  display: block;
-  font-size: 0.8rem;
-  margin-bottom: 4px;
-  color: #4b5563;
-}
-
-.admin-task-textarea {
-  width: 100%;
-  min-height: 48px;
-  font-size: 0.85rem;
-  padding: 6px 8px;
-  border-radius: 6px;
-  border: 1px solid #e5e7eb;
-  resize: vertical;
-  margin-bottom: 6px;
-}
-
-.admin-task-notearea {
-  min-height: 40px;
-}
-
-/* Export modal */
-
-.admin-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.35);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.admin-modal {
-  background: #fff;
-  padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.3);
-  max-width: 720px;
-  width: 92%;
-}
-
-.admin-modal-textarea {
-  width: 100%;
-  min-height: 220px;
-  margin: 8px 0 12px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  font-size: 0.8rem;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  padding: 8px;
-  resize: vertical;
-}
-
-/* Arrow buttons for reordering */
-
-.admin-section-header,
-.admin-subsection-header,
-.admin-task-toprow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.admin-section-title-wrap,
-.admin-subsection-title-wrap {
-  flex: 1;
-}
-
-.admin-arrow-group {
-  display: flex;
-  gap: 4px;
-}
-
-.btn-arrow {
-  border-radius: 999px;
-  border: 1px solid #e5e7eb;
-  background: #f9fafb;
-  padding: 2px 6px;
-  font-size: 0.75rem;
+  background: var(--surface-variant);
+  border: 1px solid var(--outline);
+  color: #333;
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
-.btn-arrow:hover {
-  background: #e5e7eb;
+.btn-primary-outline {
+  background: transparent;
+  border: 1px solid #1a73e8;
+  color: #1a73e8;
+  padding: 9px 16px;
+  border-radius: var(--radius-sm);
 }
 
-.admin-header-actions {
+.btn-small-outline {
+  background: transparent;
+  padding: 6px 12px;
+  border-radius: var(--radius-xs);
+  border: 1px solid #1a73e8;
+  color: #1a73e8;
+  margin-top: 6px;
+  font-size: 0.85rem;
+}
+
+/* ============================================================
+   SECTION HEADER (COLOR ACCENTED)
+   ============================================================ */
+
+.admin-section-card {
+  padding-top: 0;
+}
+
+.admin-section-header {
+  background: var(--accent1);
+  border-bottom: 1px solid var(--accent1-border);
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-section-title-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--on-surface);
+}
+.admin-section-title-input:focus {
+  outline: none;
+}
+
+/* ============================================================
+   ARROWS + DELETE BUTTON (iPhone-friendly)
+   ============================================================ */
+
+.admin-arrow-group {
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
+.btn-arrow,
 .btn-delete {
-  border-radius: 999px;
-  border: 1px solid #fecaca;
-  background: #fee2e2;
-  color: #b91c1c;
-  padding: 2px 8px;
-  font-size: 0.75rem;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+
+  border: 1px solid var(--outline);
+  background: var(--surface);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+
   cursor: pointer;
+  transition: var(--transition-fast);
 }
 
+.btn-arrow:hover,
 .btn-delete:hover {
-  background: #fecaca;
+  background: #f0f0f0;
+  box-shadow: var(--shadow-hover);
+}
+
+.btn-delete {
+  color: #d93025;
+  font-weight: 700;
+}
+
+/* ============================================================
+   SUBSECTIONS
+   ============================================================ */
+
+.admin-subsection {
+  background: var(--surface-variant);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--outline-variant);
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.admin-subsection-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.admin-subsection-title-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  font-weight: 500;
+}
+.admin-subsection-title-input:focus {
+  outline: none;
+}
+
+/* ============================================================
+   TASKS
+   ============================================================ */
+
+.admin-task {
+  background: var(--surface);
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-xs);
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+
+.admin-task-toprow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.admin-task-label {
+  font-size: 0.85rem;
+  color: #6e6e6e;
+}
+
+/* Compact textareas */
+.admin-task-textarea,
+.admin-task-notearea {
+  width: 100%;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--outline);
+  padding: 8px 10px;
+  font-size: 0.92rem;
+  resize: vertical;
+  min-height: 38px;
+  line-height: 1.3;
+  background: #fcfcfc;
+}
+
+.admin-task-textarea:focus,
+.admin-task-notearea:focus {
+  outline: 2px solid #1a73e8;
+}
+
+.admin-task-notearea {
+  margin-top: 4px;
+}
+
+/* ============================================================
+   EXPORT MODAL
+   ============================================================ */
+
+.admin-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+}
+
+.admin-modal {
+  background: var(--surface);
+  max-width: 540px;
+  margin: 10vh auto;
+  padding: 24px;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
+.admin-modal-textarea {
+  width: 100%;
+  min-height: 320px;
+  border: 1px solid var(--outline);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  padding: 12px;
 }
