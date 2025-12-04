@@ -373,7 +373,7 @@ button {
   color: var(--text-muted);
 }
 
-/* Task description textarea */
+/* Task + note textareas – compact by default, scroll when tall */
 .admin-task-textarea,
 .admin-task-notearea {
   width: 100%;
@@ -383,9 +383,13 @@ button {
   padding: 8px 13px;
   font-size: 0.96rem;
   background: #f9fafb;
-  resize: none; /* autoresize via JS */
-  max-height: 220px;
+
+  /* key bits for height behaviour */
+  height: auto;
+  min-height: 44px;          /* about 2 lines */
+  max-height: 180px;         /* cap height on desktop */
   overflow-y: auto;
+  resize: none;              /* we’ll resize via JS for smoothness */
 }
 
 .admin-task-textarea {
@@ -403,6 +407,7 @@ button {
   box-shadow: 0 0 0 1px var(--accent-blue-soft);
   background: #ffffff;
 }
+
 
 /* ============================================================
    ADMIN – BOTTOM ADD SECTION
@@ -563,3 +568,4 @@ button {
     padding: 16px 14px 14px;
   }
 }
+
