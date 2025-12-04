@@ -59,6 +59,16 @@ function renumber(list) {
   saveMasterDraft();
 }
 
+// Auto-size a textarea up to a max height, then allow scroll
+function autoSizeTextArea(el, maxHeight = 180) {
+  if (!el) return;
+  el.style.height = "auto";
+  const newHeight = Math.min(el.scrollHeight, maxHeight);
+  el.style.height = newHeight + "px";
+  el.style.overflowY = el.scrollHeight > maxHeight ? "auto" : "hidden";
+}
+
+
 // =============================================================
 // INIT & DRAFT HANDLING
 // =============================================================
@@ -415,21 +425,19 @@ function renderTask(subsection, task, taskIndex) {
   wrapper.appendChild(topRow);
 
   // Task description textarea
-  const textArea = el("textarea", "admin-task-textarea");
-  textArea.value = task.text || "";
-  textArea.placeholder = "Task description";
+const textarea = el("textarea", "admin-task-textarea");
+textarea.value = task.text || "";
+textarea.placeholder = "Task description (can be multi-line)";
 
-  if (task._height) {
-    textArea.style.height = task._height + "px";
-  }
-  autoresize(textArea);
+// initial sizing
+autoSizeTextArea(textarea);
 
-  textArea.addEventListener("input", function () {
-    task.text = textArea.value;
-    task._height = textArea.scrollHeight;
-    autoresize(textArea);
-    saveMasterDraft();
-  });
+textarea.addEventListener("input", () => {
+  task.text = textarea.value;
+  saveMasterDraft();
+  autoSizeTextArea(textarea);
+});
+
 
   wrapper.appendChild(textArea);
 
@@ -575,4 +583,5 @@ function showExportModal() {
   overlay.appendChild(modal);
   document.body.appendChild(overlay);
 }
+
 
